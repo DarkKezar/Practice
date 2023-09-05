@@ -35,7 +35,7 @@ public class AppUser : IdentityUser<Guid>
         this.PhotoSrc = PhotoSrc;
     }
 
-    public AppUser(SignUpModel Model){
+    public AppUser(SignUpModel Model) : base(Model.UserName){
         this.IsDeleted = false;
 
         this.Email = Model.Email;

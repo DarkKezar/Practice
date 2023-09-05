@@ -17,8 +17,14 @@ public class AppUserRepository : IAppUserRepository
     }
 
     public async Task<AppUser> CreateAppUserAsync(AppUser User, string Password) { 
-        await  userManager.CreateAsync(User, Password);
-        return User;
+        var result = await  userManager.CreateAsync(User, Password);
+        if(result.Succeeded)
+            return User;
+        else{
+            foreach(var e in result.Errors)
+                Console.WriteLine(e.Description);
+            return null;
+        } 
     }
     public async Task<AppUser> UpdateAppUserAsync(AppUser User) { 
         await userManager.UpdateAsync(User);
@@ -44,8 +50,9 @@ public class AppUserRepository : IAppUserRepository
         await userManager.UpdateAsync(User);    
     }
     public async Task<AppUser> AuthAppUserAsync(AuthModel Model) { 
-        var User = context.Users.SingleOrDefault(u => u.NormalizedEmail == Model.Email.ToLower());
-
+        var User = context.Users.SingleOrDefault(u => u.NormalizedEmail.Equals(Model.Email.ToUpper()));
+        Console.WriteLine(User);
+        Console.WriteLine(1);
         if(User != null)
             if((await userManager.CheckPasswordAsync(User, Model.Password)) == true)
                 return User;

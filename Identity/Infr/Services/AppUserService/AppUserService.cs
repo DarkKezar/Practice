@@ -22,7 +22,7 @@ public class AppUserService : IAppUserService
         string message = "Success";
 
         try{
-            await appUserRepository.CreateAppUserAsync(User, model.Password);
+            User = await appUserRepository.CreateAppUserAsync(User, model.Password);
         }catch(Exception e){
             httpStatusCode = (HttpStatusCode)500;
             message = e.Message;
