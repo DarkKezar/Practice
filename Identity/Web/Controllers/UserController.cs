@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Core.Models;
-using Infr.Services.AppUserService;
-using Infr.CustomResult;
-using Core.DTO;
-using Core.DTO.UpdateTO;
+using DAL.Models;
+using BLL.Services.AppUserService;
+using BLL.CustomResult;
+using BLL.DTO;
+using BLL.DTO.UpdateTO;
 
 namespace Web.Controllers;
 
@@ -11,37 +11,43 @@ namespace Web.Controllers;
 [Route("api/v1/[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly IAppUserService appUserService;
+    private readonly IAppUserService _appUserService;
 
-    public UserController(IAppUserService appUserService){
-        this.appUserService = appUserService;
+    public UserController(IAppUserService appUserService)
+    {
+        _appUserService = appUserService;
     }
 
     [HttpGet]
     [Route("{email}")]
-    public async Task<ApiResult> GetUserAsync(string email){
-        return await appUserService.ReadAppUserAsync(email);
+    public async Task<IActionResult> GetUserAsync(string email)
+    {
+        return (await _appUserService.ReadAppUserAsync(email)).Convert();
     }
 
     [HttpGet]
-    public async Task<ApiResult> GetUsersAsync(int page = 1, int count = 10){
-        return await appUserService.ReadAllAppUserAsync(page, count);
+    public async Task<IActionResult> GetUsersAsync(int page = 1, int count = 10)
+    {
+        return (await _appUserService.ReadAllAppUserAsync(page, count)).Convert();
     }
 
     [HttpPost]
-    public async Task<ApiResult> CreateUserAsync(SignUpModel model){
-        return await appUserService.CreateAppUserAsync(model);
+    public async Task<IActionResult> CreateUserAsync([FromBody] SignUpModel model)
+    {
+        return (await _appUserService.CreateAppUserAsync(model)).Convert();
     }
 
     [HttpPatch]
     [Route("password")]
-    public async Task<ApiResult> ResetPasswordAsync(PasswordUpdateModel model){
-        return await appUserService.UpdateAppUserAsync(model);
+    public async Task<IActionResult> ResetPasswordAsync([FromBody] PasswordUpdateModel model)
+    {
+        return (await _appUserService.UpdateAppUserAsync(model)).Convert();
     }
 
     [HttpPatch]
     [Route("user-data")]
-    public async Task<ApiResult> PatchUserDataAsync(AppUserUpdateModel model){
-        return await appUserService.UpdateAppUserAsync(model);
+    public async Task<IActionResult> PatchUserDataAsync([FromBody] AppUserUpdateModel model)
+    {
+        return (await _appUserService.UpdateAppUserAsync(model)).Convert();
     }
 }

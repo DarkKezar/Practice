@@ -1,6 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
-using Core.Context;
+using DAL.Context;
 using Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);

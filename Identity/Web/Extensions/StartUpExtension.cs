@@ -2,13 +2,15 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Core.Repositories.AppUserRepository;
-using Core.Repositories.AppRoleRepository;
-using Infr.Services.AppUserService;
-using Infr.Services.AppRoleService;
-using Infr.Services.AuthService;
-using Core.Models;
-using Core.Context;
+using DAL.Repositories.AppUserRepository;
+using DAL.Repositories.AppRoleRepository;
+using BLL.Services.AppUserService;
+using BLL.Services.AppRoleService;
+using BLL.Services.AuthService;
+using BLL.AutoMappers;
+using DAL.Models;
+using DAL.Context;
+using AutoMapper;
 
 namespace Web.Extensions;
 
@@ -16,6 +18,7 @@ public static class StartUpExtension
 {
     public static void DependencyInjection(this WebApplicationBuilder builder)
     {
+        builder.Services.AddAutoMapper(typeof(UserAutoMapper));
         builder.Services.AddIdentity<AppUser, AppRole>() .AddEntityFrameworkStores<AppIdentityContext>();
 
         builder.Services.AddTransient<IAppUserService, AppUserService>();
