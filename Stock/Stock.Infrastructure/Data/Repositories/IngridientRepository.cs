@@ -8,34 +8,36 @@ namespace Stock.Infrastructure.Data.Repositories;
 
 public class IngridientRepository : IRepository<Ingridient>
 {
-    private readonly IMongoCollection<Ingridient> _collection;
+    private readonly IMongoCollection<Ingridient> _ingridientCollection;
 
-    public IngridientRepository(AppDbContext context){
-        _collection = context.GetIngridientCollection();
+    public IngridientRepository(AppDbContext context)
+    {
+        _ingridientCollection = context.GetIngridientCollection();
     }
+    
     public async Task<IQueryable<Ingridient>> GetAllAsync()
     {
-        return _collection.AsQueryable();
+        return _ingridientCollection.AsQueryable();
     }
+
     public async Task<Ingridient> GetByIdAsync(Guid id)
     {
-        //I dont know, why it didn't work with SingleOrDefaultAsync()
-
-        return  (_collection.AsQueryable()).SingleOrDefault(o => o.Id == id);
+        return await _ingridientCollection.FindAsync(new BsonDocument("_id", id));
     }
+
     public async Task DeleteAsync(Ingridient entity)
     {
-        await _collection.DeleteOneAsync(new BsonDocument("_id", entity.Id));
+        await _ingridientCollection.DeleteOneAsync(new BsonDocument("_id", entity.Id));
     }
+
     public async Task<Ingridient> UpdateAsync(Ingridient entity)
     {
-        return await _collection.FindOneAndReplaceAsync(
-                        new BsonDocument("_id", entity.Id), entity
-                    );
+        return await _ingridientCollection.FindOneAndReplaceAsync(new BsonDocument("_id", entity.Id), entity);
     }
+
     public async Task<Ingridient> CreateAsync(Ingridient entity)
     {
-        await _collection.InsertOneAsync(entity);
+        await _ingridientCollection.InsertOneAsync(entity);
 
         return entity;
     }

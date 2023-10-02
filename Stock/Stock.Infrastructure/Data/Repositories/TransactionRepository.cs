@@ -8,34 +8,36 @@ namespace Stock.Infrastructure.Data.Repositories;
 
 public class TransactionRepository : IRepository<Transaction>
 {
-    private readonly IMongoCollection<Transaction> _collection;
+    private readonly IMongoCollection<Transaction> _transactionCollection;
 
-    public TransactionRepository(AppDbContext context){
-        _collection = context.GetTransactionCollection();
+    public TransactionRepository(AppDbContext context)
+    {
+        _transactionCollection = context.GetTransactionCollection();
     }
+    
     public async Task<IQueryable<Transaction>> GetAllAsync()
     {
-        return _collection.AsQueryable();
+        return _transactionCollection.AsQueryable();
     }
+
     public async Task<Transaction> GetByIdAsync(Guid id)
     {
-        //I dont know, why it didn't work with SingleOrDefaultAsync()
-
-        return  (_collection.AsQueryable()).SingleOrDefault(o => o.Id == id);
+        return await _transactionCollection.FindAsync(new BsonDocument("_id", id));
     }
+
     public async Task DeleteAsync(Transaction entity)
     {
-        await _collection.DeleteOneAsync(new BsonDocument("_id", entity.Id));
+        await _transactionCollection.DeleteOneAsync(new BsonDocument("_id", entity.Id));
     }
+
     public async Task<Transaction> UpdateAsync(Transaction entity)
     {
-        return await _collection.FindOneAndReplaceAsync(
-                        new BsonDocument("_id", entity.Id), entity
-                    );
+        return await _transactionCollection.FindOneAndReplaceAsync(new BsonDocument("_id", entity.Id), entity);
     }
+
     public async Task<Transaction> CreateAsync(Transaction entity)
     {
-        await _collection.InsertOneAsync(entity);
+        await _transactionCollection.InsertOneAsync(entity);
 
         return entity;
     }
