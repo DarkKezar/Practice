@@ -17,8 +17,13 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
 
     public async Task<T> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
-        //return await _transactionCollection.FindAsync(new BsonDocument("_id", id));
+        //throw new NotImplementedException();
+        var r = (await _collection.FindAsync(new BsonDocument("_id", id))).ToList();
+
+        if(r != null)
+            return r[0];
+        else
+            return null;
     }
 
     public async Task DeleteAsync(T entity)
