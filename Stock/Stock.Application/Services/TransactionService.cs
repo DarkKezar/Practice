@@ -1,35 +1,56 @@
 using Stock.Domain.Entities;
 using Stock.Application.IServices;
-using Stock.Domain.Interfaces;
+using Stock.Application.Interfaces;
+using Stock.Application.DTO;
+using Stock.Application.DTO.ApiResult;
+using Stock.Application.Validators;
+using AutoMapper;
+using System.Net;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace Stock.Application.Services;
 
 public class TransactionService : ITransactionService
 {
     private readonly IRepository<Transaction> _transactionRepository;
+    private readonly IMapper _mapper;
+    private TimeSpan _timeout { get; }
 
-    public TransactionService(IRepository<Transaction> repository)
+
+    public TransactionService(IRepository<Transaction> repository, IMapper mapper, TimeSpan timeout) 
     {
         _transactionRepository = repository;
+        _mapper = mapper;
+        _timeout = timeout;
     }
 
-    public async Task<Transaction> InsertTransactionAsync(Transaction transaction)
+    public async Task<IApiResult> InsertTransactionAsync(TransactionCreationTO model, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<List<Transaction>> GetUserTransactionsAsync(Guid userId)
+    public async Task<IApiResult> GetUserTransactionsAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        return (await _transactionRepository.GetAllAsync()).Where(t => t.UserId == userId).ToList();
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource((new CancellationTokenSource()).Token, cancellationToken);
+        cts.CancelAfter(_timeout);
+
+        return new ApiObjectResult<List<Transaction>>("", HttpStatusCode.OK,(await _transactionRepository.GetAllAsync()).Where(t => t.UserId == userId).ToList());
     }
 
-    public async Task<Transaction> GetTransactionAsync(Guid id)
+    public async Task<IApiResult> GetTransactionAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _transactionRepository.GetByIdAsync(id);
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource((new CancellationTokenSource()).Token, cancellationToken);
+        cts.CancelAfter(_timeout);
+
+        return new ApiObjectResult<Transaction>("", HttpStatusCode.OK, await _transactionRepository.GetByIdAsync(id));
     }
 
-    public async Task<List<Transaction>> GetAllTransactionsAsync(int page = 0, int count = 10)
+    public async Task<IApiResult> GetAllTransactionsAsync(int page = 0, int count = 10, CancellationToken cancellationToken = default)
     {
-        return (await _transactionRepository.GetAllAsync()).Skip(page * count).Take(count).ToList();
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource((new CancellationTokenSource()).Token, cancellationToken);
+        cts.CancelAfter(_timeout);
+
+        return new ApiObjectResult<List<Transaction>>("", HttpStatusCode.OK, (await _transactionRepository.GetAllAsync()).Skip(page * count).Take(count).ToList());
     }
 }

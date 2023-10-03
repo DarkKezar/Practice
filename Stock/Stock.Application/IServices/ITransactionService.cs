@@ -1,11 +1,13 @@
 using Stock.Domain.Entities;
+using Stock.Application.DTO;
+using Stock.Application.DTO.ApiResult;
 
 namespace Stock.Application.IServices;
 
 public interface ITransactionService
 {
-    Task<Transaction> InsertTransactionAsync(Transaction transaction);
-    Task<List<Transaction>> GetUserTransactionsAsync(Guid userId);
-    Task<Transaction> GetTransactionAsync(Guid id);
-    Task<List<Transaction>> GetAllTransactionsAsync(int page = 0, int count = 10);
+    Task<IApiResult> InsertTransactionAsync(TransactionCreationTO model, CancellationToken cancellationToken = default);
+    Task<IApiResult> GetUserTransactionsAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task<IApiResult> GetTransactionAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<IApiResult> GetAllTransactionsAsync(int page = 0, int count = 10, CancellationToken cancellationToken = default);
 }

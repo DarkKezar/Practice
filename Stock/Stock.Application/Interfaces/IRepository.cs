@@ -1,6 +1,6 @@
 using Stock.Domain.Entities;
 
-namespace Stock.Domain.Interfaces;
+namespace Stock.Application.Interfaces;
 
 public interface IRepository<T> where T : BaseEntity
 {
