@@ -17,7 +17,6 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
 
     public async Task<T> GetByIdAsync(Guid id)
     {
-        //throw new NotImplementedException();
         var r = (await _collection.FindAsync(new BsonDocument("_id", id))).ToList();
 
         if(r != null)
