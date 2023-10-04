@@ -54,7 +54,6 @@ public class IngridientService : IIngridientService
     {
         using var cts = CancellationTokenSource.CreateLinkedTokenSource((new CancellationTokenSource()).Token, cancellationToken);
         cts.CancelAfter(_timeout);
-        
         return new ApiObjectResult<Ingridient>("", HttpStatusCode.OK, await _ingridientRepository.GetByIdAsync(id));
     }
 }
