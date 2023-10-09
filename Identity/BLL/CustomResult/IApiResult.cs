@@ -1,9 +1,9 @@
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace BLL.CustomResult;
 
+/*
 public enum StatusCode : HttpStatusCode{
     Accepted = HttpStatusCode.Accepted,
     Created = HttpStatusCode.Created,
@@ -14,9 +14,8 @@ public enum StatusCode : HttpStatusCode{
 public enum Messages : string{
     Accepted = "Success",
     Created = "Created",
-}
+}*/
 public interface IApiResult : IConvertToActionResult
 {
-    
     public IActionResult Convert();
 }

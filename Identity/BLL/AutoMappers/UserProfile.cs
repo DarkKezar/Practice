@@ -4,9 +4,9 @@ using BLL.DTO;
 
 namespace BLL.AutoMappers;
 
-public class UserAutoMapper : Profile
+public class UserProfile : Profile
 {
-    public UserAutoMapper()
+    public UserProfile()
     {
         CreateMap<SignUpModel, AppUser>();
         CreateMap<AppUser, SignUpModel>();

@@ -16,19 +16,21 @@ public class AppRoleService : IAppRoleService
 
     public async Task<IApiResult> CreateRoleAsync(string name)
     {
-        AppRole Role = new AppRole(name);
+        AppRole role = new AppRole(name);
         HttpStatusCode httpStatusCode = HttpStatusCode.Created;
         string message = "Success";
-        try{
-            await _appRoleRepository.CreateAppRoleAsync(Role);
+        try
+        {
+            await _appRoleRepository.CreateAppRoleAsync(role);
 
-        }catch(Exception e){
+        }catch(Exception e)
+        {
             httpStatusCode = (HttpStatusCode)500;
             message = e.Message;
-            Role = null;
+            role = null;
         }
 
-        return new ApiObjectResult<AppRole>(message, httpStatusCode, Role);
+        return new OperationResult<AppRole>(message, httpStatusCode, role);
     }
 
     public async Task<IApiResult> DeleteRoleAsync(string name)
@@ -36,63 +38,71 @@ public class AppRoleService : IAppRoleService
         HttpStatusCode httpStatusCode = HttpStatusCode.Accepted;
         string message = "Success";
 
-        try{
-            var Role = await _appRoleRepository.GetAppRoleAsync(name);
-            await _appRoleRepository.DeleteAppRoleAsync(Role);
-        }catch(Exception e){
+        try
+        {
+            AppRole role = await _appRoleRepository.GetAppRoleAsync(name);
+            await _appRoleRepository.DeleteAppRoleAsync(role);
+        }catch(Exception e)
+        {
             httpStatusCode = (HttpStatusCode)500;
             message = e.Message;
         }
 
-        return new ApiResult(message, httpStatusCode);
+        return new OperationResult<Object>(message, httpStatusCode);
     }
 
-    public async Task<IApiResult> ReadRoleAsync(Guid id)
+    public async Task<IApiResult> GetRoleAsync(Guid id)
     {
-        AppRole Role = null;
+        AppRole role = null;
         HttpStatusCode httpStatusCode = HttpStatusCode.Accepted;
         string message = "Success";
 
-        try{
-            Role = await _appRoleRepository.GetAppRoleAsync(id);
-        }catch(Exception e){
+        try
+        {
+            role = await _appRoleRepository.GetAppRoleAsync(id);
+        }catch(Exception e)
+        {
             httpStatusCode = (HttpStatusCode)500;
             message = e.Message;
         }
 
-        return new ApiObjectResult<AppRole>(message, httpStatusCode, Role);
+        return new OperationResult<AppRole>(message, httpStatusCode, role);
     }
 
-    public async Task<IApiResult> ReadRoleAsync(string name)
+    public async Task<IApiResult> GetRoleAsync(string name)
     {
-        AppRole Role = null;
+        AppRole role = null;
         HttpStatusCode httpStatusCode = HttpStatusCode.Accepted;
         string message = "Success";
 
-        try{
-            Role = await _appRoleRepository.GetAppRoleAsync(name);
-        }catch(Exception e){
+        try
+        {
+            role = await _appRoleRepository.GetAppRoleAsync(name);
+        }catch(Exception e)
+        {
             httpStatusCode = (HttpStatusCode)500;
             message = e.Message;
         }
 
-        return new ApiObjectResult<AppRole>(message, httpStatusCode, Role);
+        return new OperationResult<AppRole>(message, httpStatusCode, role);
     }
 
-    public async Task<IApiResult> ReadRolesAsync(int page = 1, int count = 10)
+    public async Task<IApiResult> GetRolesAsync(int page = 1, int count = 10)
     {
-        List<AppRole> Roles = null;
+        List<AppRole> roles = null;
         HttpStatusCode httpStatusCode = HttpStatusCode.Accepted;
         string message = "Success";
 
-        try{
-            Roles = (await _appRoleRepository.GetAllAppRoleAsync())
+        try
+        {
+            roles = (await _appRoleRepository.GetAllAppRoleAsync())
                     .Skip((page - 1) * count).Take(count).ToList();
-        }catch(Exception e){
+        }catch(Exception e)
+        {
             httpStatusCode = (HttpStatusCode)500;
             message = e.Message;
         }
 
-        return new ApiObjectResult<List<AppRole>>(message, httpStatusCode, Roles);
+        return new OperationResult<List<AppRole>>(message, httpStatusCode, roles);
     }
 }

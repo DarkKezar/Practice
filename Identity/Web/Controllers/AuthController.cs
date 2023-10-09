@@ -1,15 +1,8 @@
-using System.Net;
-using System.Security.Claims;
 using BLL.DTO;
 using DAL.Models;
-using BLL.CustomResult;
 using BLL.Services.AuthService;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.AspNetCore.Identity;
-using System.Linq;
 using Web.Extensions;
 
 namespace Web.Controllers;
@@ -20,15 +13,12 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     private readonly IConfiguration _configuration;
-    private readonly UserManager<AppUser> _userManager;
 
     public AuthController(IAuthService authService, 
-                            IConfiguration configuration, 
-                            UserManager<AppUser> userManager)
+                            IConfiguration configuration)
     {
         _authService = authService;
         _configuration = configuration;
-        _userManager = userManager;
     }
 
     [HttpPost]

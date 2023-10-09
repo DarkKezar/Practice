@@ -5,14 +5,8 @@ using BLL.CustomResult;
 using System.Net;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
-using System.IdentityModel.Tokens;
-using System.Net;
-using System.Security.Claims;
-using DAL.Models;
-using BLL.CustomResult;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.AspNetCore.Identity;
 
 
 namespace BLL.Services.AuthService;
@@ -37,7 +31,8 @@ public class AuthService : IAuthService
         string message = "Success";
         
 
-        try{
+        try
+        {
             AppUser user = await _appUserRepository.AuthAppUserAsync(model.Email, model.Password);
 
             if(user != null)
@@ -60,20 +55,20 @@ public class AuthService : IAuthService
                             SecurityAlgorithms.HmacSha256)
                         );
                         
-                return new ApiObjectResult<string>(message, httpStatusCode, new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken));
+                return new OperationResult<string>(message, httpStatusCode, new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken));
             }else
             {
                 message = "Not valid email or password";
                 httpStatusCode = HttpStatusCode.BadRequest;
 
-                return new ApiResult(message, httpStatusCode);
+                return new OperationResult<Object>(message, httpStatusCode);
             }
         }catch(Exception e)
         {
             message = e.Message;
             httpStatusCode = (HttpStatusCode)500;
             
-            return new ApiResult(message, httpStatusCode);
+            return new OperationResult<Object>(message, httpStatusCode);
         }
     }
 }

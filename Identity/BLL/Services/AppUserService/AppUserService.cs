@@ -21,20 +21,21 @@ public class AppUserService : IAppUserService
     
     public async Task<IApiResult> CreateAppUserAsync(SignUpModel model)
     {
-        //AppUser User = new AppUser(model);
-        AppUser User = _mapper.Map<AppUser>(model);
+        AppUser user = _mapper.Map<AppUser>(model);
         HttpStatusCode httpStatusCode = HttpStatusCode.Created;
         string message = "Success";
 
-        try{
-            User = await _appUserRepository.CreateAppUserAsync(User, model.Password);
-        }catch(Exception e){
+        try
+        {
+            user = await _appUserRepository.CreateAppUserAsync(user, model.Password);
+        }catch(Exception e)
+        {
             httpStatusCode = (HttpStatusCode)500;
             message = e.Message;
-            User = null;
+            user = null;
         }
 
-        return new ApiObjectResult<AppUser>(message, httpStatusCode, User);
+        return new OperationResult<AppUser>(message, httpStatusCode, user);
     }
 
     public async Task<IApiResult> DeleteAppUserAsync(string email)
@@ -42,49 +43,54 @@ public class AppUserService : IAppUserService
         HttpStatusCode httpStatusCode = HttpStatusCode.OK;
         string message = "Success";
 
-        try{
-            await _appUserRepository.DeleteAppUserAsync(
-                await _appUserRepository.GetAppUserAsync(email)
-            );
-        }catch(Exception e){
+        try
+        {
+            AppUser user = await _appUserRepository.GetAppUserAsync(email);
+            await _appUserRepository.DeleteAppUserAsync(user);
+        }catch(Exception e)
+        {
             httpStatusCode = (HttpStatusCode)500;
             message = e.Message;
         }
 
-        return new ApiResult(message, httpStatusCode);
+        return new OperationResult<Object>(message, httpStatusCode);
     }
 
-    public async Task<IApiResult> ReadAllAppUserAsync(int page = 1, int count = 10)
+    public async Task<IApiResult> GetAllAppUserAsync(int page = 1, int count = 10)
     {
         List<AppUser> users = null;
         HttpStatusCode httpStatusCode = HttpStatusCode.OK;
         string message = "Success";
 
-        try{
+        try
+        {
             users = (await _appUserRepository.GetAllAppUserAsync())
                     .Skip((page - 1) * count).Take(count).ToList();
-        }catch(Exception e){
+        }catch(Exception e)
+        {
             httpStatusCode = (HttpStatusCode)500;
             message = e.Message;
         }
 
-        return new ApiObjectResult<List<AppUser>>(message, httpStatusCode, users);
+        return new OperationResult<List<AppUser>>(message, httpStatusCode, users);
     }
 
-    public async Task<IApiResult> ReadAppUserAsync(string email)
+    public async Task<IApiResult> GetAppUserAsync(string email)
     {
         AppUser user = null;
         HttpStatusCode httpStatusCode = HttpStatusCode.OK;
         string message = "Success";
 
-        try{
+        try
+        {
             user = await _appUserRepository.GetAppUserAsync(email);
-        }catch(Exception e){
+        }catch(Exception e)
+        {
             httpStatusCode = (HttpStatusCode)500;
             message = e.Message;
         }
 
-        return new ApiObjectResult<AppUser>(message, httpStatusCode, user);
+        return new OperationResult<AppUser>(message, httpStatusCode, user);
 
     }
 
@@ -93,62 +99,70 @@ public class AppUserService : IAppUserService
         HttpStatusCode httpStatusCode = HttpStatusCode.OK;
         string message = "Success";
 
-        try{
+        try
+        {
             AppUser user = await _appUserRepository.AuthAppUserAsync(model.AuthData.Email, model.AuthData.Password);
 
-            if(model is AppUserUpdateModel){
-                AppUserUpdateModel Model = (AppUserUpdateModel)model;
+            if(model is AppUserUpdateModel)
+            {
+                AppUserUpdateModel updModel = (AppUserUpdateModel)model;
 
                 //if(Model.Email == null)
                     //another logic
-                if(Model.PhotoSrc == null)
-                    user.PhotoSrc = Model.PhotoSrc;
+                if(updModel.PhotoSrc == null)
+                    user.PhotoSrc = updModel.PhotoSrc;
 
                 await _appUserRepository.UpdateAppUserAsync(user);
-            } else if (model is PasswordUpdateModel){
-                PasswordUpdateModel Model = (PasswordUpdateModel)model;
+            } else if (model is PasswordUpdateModel)
+            {
+                PasswordUpdateModel updModel = (PasswordUpdateModel)model;
 
-                await _appUserRepository.UpdatePasswordAsync(user, model.AuthData.Password, Model.NewPassword);
+                await _appUserRepository.UpdatePasswordAsync(user, model.AuthData.Password, updModel.NewPassword);
             }
-        }catch(Exception e){
+        }catch(Exception e)
+        {
             httpStatusCode = (HttpStatusCode)500;
             message = e.Message;
         }
 
-        return new ApiResult(message, httpStatusCode);
+        return new OperationResult<Object>(message, httpStatusCode);
     }
 
     public async Task<IApiResult> AddToRoleAsync(string email, string role)
     {
         HttpStatusCode httpStatusCode = HttpStatusCode.OK;
         string message = "Success";
-        try{
+        try
+        {
             await _appUserRepository.AddAppRoleAsync(
                 await _appUserRepository.GetAppUserAsync(email),
                 role
             );
-        }catch(Exception e){
+        }catch(Exception e)
+        {
             httpStatusCode = (HttpStatusCode)500;
             message = e.Message;
         }
 
-        return new ApiResult(message, httpStatusCode);
+        return new OperationResult<Object>(message, httpStatusCode);
     }
 
     public async Task<IApiResult> RemoveFromRoleAsync(string email, string role)
     {
         HttpStatusCode httpStatusCode = HttpStatusCode.OK;
         string message = "Success";
-        try{
+        try
+        {
             await _appUserRepository.RemoveAppRoleAsync(
                 await _appUserRepository.GetAppUserAsync(email),
                 role
             );
-        }catch(Exception e){
+        }catch(Exception e)
+        {
             httpStatusCode = (HttpStatusCode)500;
             message = e.Message;
         }
 
-        return new ApiResult(message, httpStatusCode);
+        return new OperationResult<Object>(message, httpStatusCode);
     }
 }

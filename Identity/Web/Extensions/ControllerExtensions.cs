@@ -13,6 +13,7 @@ public static class ControllerExtensions
             _configuration.GetValue<string>("Jwt:Audience"),
             _configuration.GetValue<string>("Jwt:Key"));
     }
+    
     public static Guid GetCurrentUserId(this Controller controller)
     { 
         return Guid.Parse(controller.HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Sid)

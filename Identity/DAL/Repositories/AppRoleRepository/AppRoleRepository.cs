@@ -21,18 +21,22 @@ public class AppRoleRepository : IAppRoleRepository
         
         return role;
     }
+    
     public async Task<AppRole> GetAppRoleAsync(Guid id) 
     { 
         return await _roleManager.FindByIdAsync(id.ToString());
     }
+
     public async Task<AppRole> GetAppRoleAsync(string name) 
     { 
         return await _roleManager.FindByNameAsync(name);
     }
+
     public async Task<IQueryable<AppRole>> GetAllAppRoleAsync() 
     { 
         return _context.Roles;    
     }
+
     public async Task DeleteAppRoleAsync(AppRole role) 
     { 
         await _roleManager.DeleteAsync(role);

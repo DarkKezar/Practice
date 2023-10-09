@@ -1,4 +1,3 @@
-using BLL.CustomResult;
 using BLL.Services.AppRoleService;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,14 +17,14 @@ public class RoleController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetRolesAsync(int page = 1, int count = 10)
     {
-        return (await _appRoleService.ReadRolesAsync(page, count)).Convert();
+        return (await _appRoleService.GetRolesAsync(page, count)).Convert();
     }
 
     [HttpGet]
     [Route("{name}")]
     public async Task<IActionResult> GetRoleAsync(string name)
     {
-        return (await _appRoleService.ReadRoleAsync(name)).Convert();
+        return (await _appRoleService.GetRoleAsync(name)).Convert();
     }
 
     [HttpPost]

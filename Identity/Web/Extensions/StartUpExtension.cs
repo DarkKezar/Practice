@@ -10,7 +10,6 @@ using BLL.Services.AuthService;
 using BLL.AutoMappers;
 using DAL.Models;
 using DAL.Context;
-using AutoMapper;
 
 namespace Web.Extensions;
 
@@ -18,12 +17,13 @@ public static class StartUpExtension
 {
     public static void DependencyInjection(this WebApplicationBuilder builder)
     {
-        builder.Services.AddAutoMapper(typeof(UserAutoMapper));
+        builder.Services.AddAutoMapper(typeof(UserProfile));
         builder.Services.AddIdentity<AppUser, AppRole>() .AddEntityFrameworkStores<AppIdentityContext>();
 
-        builder.Services.AddTransient<IAppUserService, AppUserService>();
-        builder.Services.AddTransient<IAppRoleService, AppRoleService>();
-        builder.Services.AddTransient<IAuthService, AuthService>();
+        builder.Services.AddScoped<IAppUserService, AppUserService>();
+        builder.Services.AddScoped<IAppRoleService, AppRoleService>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
+
         builder.Services.AddTransient<IAppUserRepository, AppUserRepository>();
         builder.Services.AddTransient<IAppRoleRepository, AppRoleRepository>(); 
     }

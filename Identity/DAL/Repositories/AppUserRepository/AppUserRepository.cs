@@ -12,8 +12,8 @@ public class AppUserRepository : IAppUserRepository
 
     public AppUserRepository(UserManager<AppUser> userManager, AppIdentityContext context)
     {
-        _userManager = _userManager;
-        _context = _context;
+        _userManager = userManager;
+        _context = context;
     }
 
     public async Task<AppUser> CreateAppUserAsync(AppUser user, string password) 
@@ -43,6 +43,7 @@ public class AppUserRepository : IAppUserRepository
 
         return user;
     }
+
     public async Task<AppUser> GetAppUserAsync(Guid id) 
     { 
         return _context.Users.SingleOrDefault(u => u.Id == id);    
@@ -52,29 +53,35 @@ public class AppUserRepository : IAppUserRepository
     { 
         return _context.Users.SingleOrDefault(u => u.NormalizedEmail == email);    
     }
+
     public async Task<IQueryable<AppUser>> GetAllAppUserAsync() 
     { 
         return _context.Users;
     }
+
     public async Task DeleteAppUserAsync(AppUser user) 
     { 
         user.IsDeleted = true;
         await _userManager.UpdateAsync(user);    
     }
+
     public async Task<AppUser> AuthAppUserAsync(string email, string password) 
     { 
         var User = _context.Users.SingleOrDefault(u => u.NormalizedEmail.Equals(email.ToUpper()));
         if(User != null)
+        {
             if((await _userManager.CheckPasswordAsync(User, password)) == true)
-
+            {
                 return User;
-            else
 
+            }else
+            {
                 return null;
-        else
-
+            }
+        }else
+        {
             return null;
-        
+        }
     }
 
     public async Task<AppUser> AddAppRoleAsync(AppUser user, AppRole role) 
@@ -83,12 +90,14 @@ public class AppUserRepository : IAppUserRepository
 
         return user;
     }
+
     public async Task<AppUser> AddAppRoleAsync(AppUser user, string role) 
     { 
         await _userManager.AddToRoleAsync(user, role);
 
         return user;
     }
+
     public async Task<AppUser> RemoveAppRoleAsync(AppUser user, AppRole role) 
     { 
         await _userManager.RemoveFromRoleAsync(user, role.Name);

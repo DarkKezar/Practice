@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using DAL.Models;
 using BLL.Services.AppUserService;
-using BLL.CustomResult;
 using BLL.DTO;
 using BLL.DTO.UpdateTO;
 
@@ -22,13 +20,13 @@ public class UserController : ControllerBase
     [Route("{email}")]
     public async Task<IActionResult> GetUserAsync(string email)
     {
-        return (await _appUserService.ReadAppUserAsync(email)).Convert();
+        return (await _appUserService.GetAppUserAsync(email)).Convert();
     }
 
     [HttpGet]
     public async Task<IActionResult> GetUsersAsync(int page = 1, int count = 10)
     {
-        return (await _appUserService.ReadAllAppUserAsync(page, count)).Convert();
+        return (await _appUserService.GetAllAppUserAsync(page, count)).Convert();
     }
 
     [HttpPost]
