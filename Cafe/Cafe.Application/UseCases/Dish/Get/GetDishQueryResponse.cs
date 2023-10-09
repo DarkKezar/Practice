@@ -1,8 +1,6 @@
-using Cafe.Domain.Entities;
+namespace Cafe.Application.UseCases.Dish.Get;
 
-namespace Cafe.Application.DTO.DishTO;
-
-public class DishVM
+public class GetDishQueryResponse
 {
     public Guid Id { get; set; }
     public string Name { get; set; }

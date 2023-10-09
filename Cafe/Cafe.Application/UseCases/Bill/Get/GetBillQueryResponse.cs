@@ -1,8 +1,8 @@
 using Cafe.Domain.Entities;
 
-namespace Cafe.Application.DTO.BillTO;
+namespace Cafe.Application.UseCases.Bill.Get;
 
-public class BillVM
+public class GetBillQueryResponse
 {
     public Guid Id { get; set; }
     public DateTime DateTime { get; set; }
