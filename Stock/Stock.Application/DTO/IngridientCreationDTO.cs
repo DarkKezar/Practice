@@ -1,6 +1,6 @@
 namespace Stock.Application.DTO;
 
-public class IngridientCreationTO
+public class IngridientCreationDTO
 {
     public string Name { get; set; }
 }

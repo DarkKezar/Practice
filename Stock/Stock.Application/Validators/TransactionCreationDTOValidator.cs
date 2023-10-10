@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Stock.Application.Validators;
 
-public class TransactionCTOValidator : AbstractValidator<TransactionCreationTO>
+public class TransactionCreationDTOValidator : AbstractValidator<TransactionCreationDTO>
 {
-    public TransactionCTOValidator()
+    public TransactionCreationDTOValidator()
     {
         RuleFor(m => m.UserId).NotEmpty().WithMessage("Enter userId");
         RuleFor(m => m.IngridientsId).NotNull();

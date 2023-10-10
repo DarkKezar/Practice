@@ -19,21 +19,27 @@ public class IngridientsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync(int page = 0, int count = 10)
+    public async Task<IActionResult> GetAllAsync(int page = 0, int count = 10, CancellationToken cancellationToken = default)
     {
-        return (await _ingridientService.GetAllIngridientAsync(page, count)).Convert();
+        var result = await _ingridientService.GetAllIngridientAsync(page, count, cancellationToken);
+
+        return result.Convert();
     }
 
     [HttpGet]
     [Route("{id}")]
-    public async Task<IActionResult> GetAsync(Guid id)
+    public async Task<IActionResult> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return (await _ingridientService.GetIngridientAsync(id)).Convert();
+        var result = await _ingridientService.GetIngridientAsync(id, cancellationToken);
+
+        return result.Convert();
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostAsync([FromBody]IngridientCreationTO model)
+    public async Task<IActionResult> PostAsync([FromBody]IngridientCreationDTO model, CancellationToken cancellationToken = default)
     {
-        return (await _ingridientService.CreateIngridientAsync(model)).Convert();
+        var result = await _ingridientService.CreateIngridientAsync(model, cancellationToken);
+        
+        return result.Convert();
     }
 }

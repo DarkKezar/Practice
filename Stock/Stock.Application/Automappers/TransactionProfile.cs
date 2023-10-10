@@ -4,10 +4,10 @@ using AutoMapper;
 
 namespace Stock.Application.Automappers;
 
-public class IngridiemtAutoMapper : Profile
+public class TransactionProfile : Profile
 {
-    public IngridiemtAutoMapper()
+    public TransactionProfile()
     {
-        CreateMap<IngridientCreationTO, Ingridient>();
+        CreateMap<TransactionCreationDTO, Transaction>();
     }
 }

@@ -15,42 +15,31 @@ public class TransactionService : ITransactionService
 {
     private readonly IRepository<Transaction> _transactionRepository;
     private readonly IMapper _mapper;
-    private TimeSpan _timeout { get; }
 
 
-    public TransactionService(IRepository<Transaction> repository, IMapper mapper, TimeSpan timeout) 
+    public TransactionService(IRepository<Transaction> repository, IMapper mapper) 
     {
         _transactionRepository = repository;
         _mapper = mapper;
-        _timeout = timeout;
     }
 
-    public async Task<IApiResult> InsertTransactionAsync(TransactionCreationTO model, CancellationToken cancellationToken = default)
+    public async Task<IApiResult> InsertTransactionAsync(TransactionCreationDTO model, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
 
     public async Task<IApiResult> GetUserTransactionsAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        using var cts = CancellationTokenSource.CreateLinkedTokenSource((new CancellationTokenSource()).Token, cancellationToken);
-        cts.CancelAfter(_timeout);
-
-        return new ApiObjectResult<List<Transaction>>("", HttpStatusCode.OK,(await _transactionRepository.GetAllAsync()).Where(t => t.UserId == userId).ToList());
+        return new OperationResult<List<Transaction>>("", HttpStatusCode.OK,(await _transactionRepository.GetAllAsync()).Where(t => t.UserId == userId).ToList());
     }
 
     public async Task<IApiResult> GetTransactionAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        using var cts = CancellationTokenSource.CreateLinkedTokenSource((new CancellationTokenSource()).Token, cancellationToken);
-        cts.CancelAfter(_timeout);
-
-        return new ApiObjectResult<Transaction>("", HttpStatusCode.OK, await _transactionRepository.GetByIdAsync(id));
+        return new OperationResult<Transaction>("", HttpStatusCode.OK, await _transactionRepository.GetByIdAsync(id));
     }
 
     public async Task<IApiResult> GetAllTransactionsAsync(int page = 0, int count = 10, CancellationToken cancellationToken = default)
     {
-        using var cts = CancellationTokenSource.CreateLinkedTokenSource((new CancellationTokenSource()).Token, cancellationToken);
-        cts.CancelAfter(_timeout);
-
-        return new ApiObjectResult<List<Transaction>>("", HttpStatusCode.OK, (await _transactionRepository.GetAllAsync()).Skip(page * count).Take(count).ToList());
+        return new OperationResult<List<Transaction>>("", HttpStatusCode.OK, (await _transactionRepository.GetAllAsync()).Skip(page * count).Take(count).ToList());
     }
 }

@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Stock.Application.Validators;
 
-public class IngridientCTOValidator : AbstractValidator<IngridientCreationTO>
+public class IngridientCreationDTOValidator : AbstractValidator<IngridientCreationDTO>
 {
-    public IngridientCTOValidator()
+    public IngridientCreationDTOValidator()
     {
         RuleFor(m => m.Name).NotEmpty().WithMessage("Please, enter ingridient name");
     }

@@ -6,6 +6,7 @@ using Stock.Application.Services;
 using Stock.Application.Interfaces;
 using Stock.Infrastructure.Data.Repositories;
 using Stock.Domain.Entities;
+using Stock.Application.Automappers;
 
 namespace Stock.Web.Extensions;
 
@@ -13,6 +14,9 @@ public static class BuilderExtensions
 {
     public static void DependencyInjection(this WebApplicationBuilder builder)
     {
+        builder.Services.AddAutoMapper(typeof(IngridientProfile));
+        builder.Services.AddAutoMapper(typeof(TransactionProfile));
+
         builder.Services.Configure<StockDatabaseSettings>(
             builder.Configuration.GetSection("StockDatabase"));
         builder.Services.AddSingleton<AppDbContext>();
