@@ -15,35 +15,67 @@ namespace Stock.Application.Services;
 public class TransactionService : ITransactionService
 {
     private readonly IRepository<Transaction> _transactionRepository;
+    private readonly IRepository<Ingridient> _ingridientRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<TransactionCreationDTO> _validator;
 
 
 
-    public TransactionService(IRepository<Transaction> repository, IMapper mapper, IValidator<TransactionCreationDTO> validator) 
+    public TransactionService(IRepository<Transaction> repository, 
+                                IRepository<Ingridient> ingridientRepository, 
+                                IMapper mapper, 
+                                IValidator<TransactionCreationDTO> validator) 
     {
         _transactionRepository = repository;
+        _ingridientRepository = ingridientRepository;
         _mapper = mapper;
         _validator = validator;
     }
 
     public async Task<IApiResult> InsertTransactionAsync(TransactionCreationDTO model, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var validationResult = await _validator.ValidateAsync(model);
+        if(validationResult.IsValid)
+        {   
+            Transaction transaction = _mapper.Map<TransactionCreationDTO, Transaction>(model);
+            List<Ingridient> ingridients = (await _ingridientRepository.GetAllAsync()).Where(ing => transaction.IngridientsId.Contains(ing.Id)).ToList();
+
+            if(ingridients.Count != transaction.IngridientsId.Count) throw new Exception(Messages.NotFound);
+
+            foreach(var a in ingridients)
+            {
+                int index = transaction.IngridientsId.IndexOf(a.Id);
+                a.Supplies += transaction.Count[index];
+                await _ingridientRepository.UpdateAsync(a);
+            }
+            await _transactionRepository.CreateAsync(transaction);
+
+            return new OperationResult<Transaction>(Messages.Created, HttpStatusCode.Created, transaction);
+        }else 
+        {
+            throw new Exception(validationResult.ToString("|"));
+        }
     }
 
     public async Task<IApiResult> GetUserTransactionsAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        return new OperationResult<List<Transaction>>("", HttpStatusCode.OK,(await _transactionRepository.GetAllAsync()).Where(t => t.UserId == userId).ToList());
+        List<Transaction> result = (await _transactionRepository.GetAllAsync()).Where(t => t.UserId == userId).ToList();
+        
+        return new OperationResult<List<Transaction>>(Messages.Success, HttpStatusCode.OK, result);
     }
 
     public async Task<IApiResult> GetTransactionAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return new OperationResult<Transaction>("", HttpStatusCode.OK, await _transactionRepository.GetByIdAsync(id));
+        Transaction result = await _transactionRepository.GetByIdAsync(id);
+        if(result == null) throw new Exception(Messages.NotFound);
+
+        return new OperationResult<Transaction>(Messages.Success, HttpStatusCode.OK, result);
     }
 
     public async Task<IApiResult> GetAllTransactionsAsync(int page = 0, int count = 10, CancellationToken cancellationToken = default)
     {
-        return new OperationResult<List<Transaction>>("", HttpStatusCode.OK, (await _transactionRepository.GetAllAsync()).Skip(page * count).Take(count).ToList());
+        List<Transaction> result = (await _transactionRepository.GetAllAsync()).Skip(page * count).Take(count).ToList();
+
+        return new OperationResult<List<Transaction>>("", HttpStatusCode.OK, result);
     }
 }

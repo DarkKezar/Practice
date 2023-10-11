@@ -33,20 +33,28 @@ public class IngridientService : IIngridientService
         if(validationResult.IsValid)
         {
             var ingridient = _mapper.Map<IngridientCreationDTO, Ingridient>(model);
-//await _ingridientRepository.CreateAsync(ingridient)
-            return new OperationResult<Ingridient>("", HttpStatusCode.Created, ingridient);
+            await _ingridientRepository.CreateAsync(ingridient);
+
+            return new OperationResult<Ingridient>(Messages.Created, HttpStatusCode.Created, ingridient);
+        }else 
+        {
+            throw new Exception(validationResult.ToString("|"));
         }
 
-        return new OperationResult<List<FluentValidation.Results.ValidationFailure>>("", HttpStatusCode.BadRequest, validationResult.Errors);
     }
 
     public async Task<IApiResult> GetAllIngridientAsync(int page = 0, int count = 10, CancellationToken cancellationToken = default)
     {
-        return new OperationResult<List<Ingridient>>("", HttpStatusCode.OK, (await _ingridientRepository.GetAllAsync()).Skip(page * count).Take(count).ToList());
+        List<Ingridient> result = (await _ingridientRepository.GetAllAsync()).Skip(page * count).Take(count).ToList();
+
+        return new OperationResult<List<Ingridient>>(Messages.Success, HttpStatusCode.OK, result);
     }
 
     public async Task<IApiResult> GetIngridientAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return new OperationResult<Ingridient>("", HttpStatusCode.OK, await _ingridientRepository.GetByIdAsync(id));
+        Ingridient result = await _ingridientRepository.GetByIdAsync(id);
+        if(result == null) throw new Exception(Messages.NotFound);
+
+        return new OperationResult<Ingridient>(Messages.Success, HttpStatusCode.OK, result);
     }
 }
