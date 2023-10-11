@@ -14,15 +14,15 @@ namespace Stock.Application.Services;
 
 public class TransactionService : ITransactionService
 {
-    private readonly IRepository<Transaction> _transactionRepository;
-    private readonly IRepository<Ingridient> _ingridientRepository;
+    private readonly ITransactionRepository _transactionRepository;
+    private readonly IIngridientRepository _ingridientRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<TransactionCreationDTO> _validator;
 
 
 
-    public TransactionService(IRepository<Transaction> repository, 
-                                IRepository<Ingridient> ingridientRepository, 
+    public TransactionService(ITransactionRepository repository, 
+                                IIngridientRepository ingridientRepository, 
                                 IMapper mapper, 
                                 IValidator<TransactionCreationDTO> validator) 
     {

@@ -15,12 +15,12 @@ namespace Stock.Application.Services;
 
 public class IngridientService : IIngridientService
 {
-    private readonly IRepository<Ingridient> _ingridientRepository; 
+    private readonly IIngridientRepository _ingridientRepository; 
     private readonly IMapper _mapper;
     private readonly IValidator<IngridientCreationDTO> _validator;
 
 
-    public IngridientService(IRepository<Ingridient> repository, IMapper mapper, IValidator<IngridientCreationDTO> validator)
+    public IngridientService(IIngridientRepository repository, IMapper mapper, IValidator<IngridientCreationDTO> validator)
     {
         _ingridientRepository = repository;
         _mapper = mapper;

@@ -6,7 +6,7 @@ using MongoDB.Bson;
 
 namespace Stock.Infrastructure.Data.Repositories;
 
-public class TransactionRepository : BaseRepository<Transaction>
+public class TransactionRepository : BaseRepository<Transaction>, ITransactionRepository
 {
     public TransactionRepository(AppDbContext context)
     {

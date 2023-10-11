@@ -24,8 +24,8 @@ public static class BuilderExtensions
 
     public static void RepositoriesRegistration(this WebApplicationBuilder builder)
     {
-        builder.Services.AddTransient<IRepository<Ingridient>, IngridientRepository>();
-        builder.Services.AddTransient<IRepository<Transaction>, TransactionRepository>();
+        builder.Services.AddTransient<IIngridientRepository, IngridientRepository>();
+        builder.Services.AddTransient<ITransactionRepository, TransactionRepository>();
     }
 
     public static void ServicesRegistration(this WebApplicationBuilder builder)

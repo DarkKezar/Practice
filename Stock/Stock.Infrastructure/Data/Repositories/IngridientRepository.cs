@@ -6,7 +6,7 @@ using MongoDB.Bson;
 
 namespace Stock.Infrastructure.Data.Repositories;
 
-public class IngridientRepository : BaseRepository<Ingridient>
+public class IngridientRepository : BaseRepository<Ingridient>, IIngridientRepository
 {
 
     public IngridientRepository(AppDbContext context)
