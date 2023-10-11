@@ -2,7 +2,12 @@ using Stock.Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.DependencyInjection();
+builder.DatabaseRegistration();
+builder.RepositoriesRegistration();
+builder.ServicesRegistration();
+builder.AutomappersRegistration();
+builder.ValidatorsRegistration();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.SwaggerSetUp();

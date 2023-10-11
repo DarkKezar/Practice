@@ -7,25 +7,43 @@ using Stock.Application.Interfaces;
 using Stock.Infrastructure.Data.Repositories;
 using Stock.Domain.Entities;
 using Stock.Application.Automappers;
+using Stock.Application.Validators;
+using Stock.Application.DTO;
+using FluentValidation;
 
 namespace Stock.Web.Extensions;
 
 public static class BuilderExtensions
 {
-    public static void DependencyInjection(this WebApplicationBuilder builder)
+    public static void DatabaseRegistration(this WebApplicationBuilder builder)
     {
-        builder.Services.AddAutoMapper(typeof(IngridientProfile));
-        builder.Services.AddAutoMapper(typeof(TransactionProfile));
-
         builder.Services.Configure<StockDatabaseSettings>(
             builder.Configuration.GetSection("StockDatabase"));
         builder.Services.AddSingleton<AppDbContext>();
+    }
 
-        builder.Services.AddTransient<IIngridientService, IngridientService>();
-        builder.Services.AddTransient<ITransactionService, TransactionService>();
-
+    public static void RepositoriesRegistration(this WebApplicationBuilder builder)
+    {
         builder.Services.AddTransient<IRepository<Ingridient>, IngridientRepository>();
         builder.Services.AddTransient<IRepository<Transaction>, TransactionRepository>();
+    }
+
+    public static void ServicesRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddTransient<IIngridientService, IngridientService>();
+        builder.Services.AddTransient<ITransactionService, TransactionService>();
+    }
+
+    public static void AutomappersRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddAutoMapper(typeof(IngridientProfile));
+        builder.Services.AddAutoMapper(typeof(TransactionProfile));
+    }
+
+    public static void ValidatorsRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<IValidator<IngridientCreationDTO>, IngridientCreationDTOValidator>();
+        builder.Services.AddScoped<IValidator<TransactionCreationDTO>, TransactionCreationDTOValidator>();
     }
 
     public static void SwaggerSetUp(this WebApplicationBuilder builder)

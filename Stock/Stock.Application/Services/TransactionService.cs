@@ -8,6 +8,7 @@ using AutoMapper;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using FluentValidation;
 
 namespace Stock.Application.Services;
 
@@ -15,12 +16,15 @@ public class TransactionService : ITransactionService
 {
     private readonly IRepository<Transaction> _transactionRepository;
     private readonly IMapper _mapper;
+    private readonly IValidator<TransactionCreationDTO> _validator;
 
 
-    public TransactionService(IRepository<Transaction> repository, IMapper mapper) 
+
+    public TransactionService(IRepository<Transaction> repository, IMapper mapper, IValidator<TransactionCreationDTO> validator) 
     {
         _transactionRepository = repository;
         _mapper = mapper;
+        _validator = validator;
     }
 
     public async Task<IApiResult> InsertTransactionAsync(TransactionCreationDTO model, CancellationToken cancellationToken = default)
