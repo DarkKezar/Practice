@@ -1,3 +1,4 @@
+using Cafe.Application.DTO;
 using Cafe.Application.Interfaces;
 using Cafe.Domain.Entities;
 using MongoDB.Driver;
@@ -17,11 +18,12 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
     public async Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var r = (await _collection.FindAsync(new BsonDocument("_id", id))).ToList();
+        if(r == null)
+        {
+            throw new Exception(Messages.NotFound);
+        }
 
-        if(r != null)
-            return r[0];
-        else
-            return null;
+        return r[0];
     }
 
     public async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)

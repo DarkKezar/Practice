@@ -1,6 +1,10 @@
-namespace Cafe.Domain.Entities;
+using MediatR;
+using Cafe.Domain.Entities;
+using Cafe.Application.ApiResult;
 
-public class Dish : BaseEntity
+namespace Cafe.Application.UseCases.DishCases.Create;
+
+public class CreateDishCommand : IRequest<IApiResult>
 {
     public string Name { get; set; }
     public decimal Price { get; set; }
