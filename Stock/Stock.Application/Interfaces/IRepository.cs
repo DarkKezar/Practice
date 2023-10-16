@@ -4,9 +4,10 @@ namespace Stock.Application.Interfaces;
 
 public interface IRepository<T> where T : BaseEntity
 {
-    Task<IQueryable<T>> GetAllAsync();
-    Task<T> GetByIdAsync(Guid id);
-    Task DeleteAsync(T entity);
-    Task<T> UpdateAsync(T entity);
-    Task<T> CreateAsync(T entity);
+    Task<IList<T>> GetAllAsync(int page, int count, CancellationToken cancellationToken = default);
+    Task<IQueryable<T>> GetIQueryableAsync(CancellationToken cancellationToken = default);
+    Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
+    Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default);
+    Task<T> CreateAsync(T entity, CancellationToken cancellationToken = default);
 }

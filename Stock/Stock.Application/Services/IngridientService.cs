@@ -2,14 +2,13 @@ using Stock.Domain.Entities;
 using Stock.Application.IServices;
 using Stock.Application.Interfaces;
 using Stock.Application.DTO;
-using Stock.Application.DTO.ApiResult;
+using Stock.Application.DTO.OperationResult;
 using Stock.Application.Validators;
 using AutoMapper;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using FluentValidation;
-
 
 namespace Stock.Application.Services;
 
@@ -19,7 +18,6 @@ public class IngridientService : IIngridientService
     private readonly IMapper _mapper;
     private readonly IValidator<IngridientCreationDTO> _validator;
 
-
     public IngridientService(IIngridientRepository repository, IMapper mapper, IValidator<IngridientCreationDTO> validator)
     {
         _ingridientRepository = repository;
@@ -27,33 +25,37 @@ public class IngridientService : IIngridientService
         _validator = validator;
     }
 
-    public async Task<IApiResult> CreateIngridientAsync(IngridientCreationDTO model, CancellationToken cancellationToken = default)
+    public async Task<IOperationResult> CreateIngridientAsync(IngridientCreationDTO model, CancellationToken cancellationToken = default)
     {
         var validationResult = await _validator.ValidateAsync(model);
-        if(validationResult.IsValid)
+        if(!validationResult.IsValid)
         {
-            var ingridient = _mapper.Map<IngridientCreationDTO, Ingridient>(model);
-            await _ingridientRepository.CreateAsync(ingridient);
-
-            return new OperationResult<Ingridient>(Messages.Created, HttpStatusCode.Created, ingridient);
-        }else 
-        {
-            throw new Exception(validationResult.ToString("|"));
+            throw new OperationWebException(validationResult.ToString("|"), (HttpStatusCode)400);   
         }
+        var ingridient = _mapper.Map<IngridientCreationDTO, Ingridient>(model);
+        await _ingridientRepository.CreateAsync(ingridient, cancellationToken);
 
+        return new OperationResult<Ingridient>(Messages.Created, HttpStatusCode.Created, ingridient);
     }
 
-    public async Task<IApiResult> GetAllIngridientAsync(int page = 0, int count = 10, CancellationToken cancellationToken = default)
+    public async Task<IOperationResult> GetAllIngridientAsync(int page = 0, int count = 10, CancellationToken cancellationToken = default)
     {
-        List<Ingridient> result = (await _ingridientRepository.GetAllAsync()).Skip(page * count).Take(count).ToList();
+        if(page < 0 || count < 0)
+        {
+            throw new OperationWebException(Messages.BadRequest, (HttpStatusCode)400);
+        }
+        var result = await _ingridientRepository.GetAllAsync(page, count, cancellationToken);
 
-        return new OperationResult<List<Ingridient>>(Messages.Success, HttpStatusCode.OK, result);
+        return new OperationResult<IList<Ingridient>>(Messages.Success, HttpStatusCode.OK, result);
     }
 
-    public async Task<IApiResult> GetIngridientAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<IOperationResult> GetIngridientAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        Ingridient result = await _ingridientRepository.GetByIdAsync(id);
-        if(result == null) throw new Exception(Messages.NotFound);
+        var result = await _ingridientRepository.GetByIdAsync(id, cancellationToken);
+        if(result == null) 
+        {
+            throw new OperationWebException(Messages.NotFound, (HttpStatusCode)400);
+        }
 
         return new OperationResult<Ingridient>(Messages.Success, HttpStatusCode.OK, result);
     }

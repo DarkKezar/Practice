@@ -1,5 +1,5 @@
 using Stock.Application.IServices;
-using Stock.Application.DTO.ApiResult;
+using Stock.Application.DTO.OperationResult;
 using Stock.Application.DTO;
 using System.Net;
 using System.Text;

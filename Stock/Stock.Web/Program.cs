@@ -14,19 +14,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.SwaggerSetUp();
 
 var app = builder.Build();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.UseMiddleware<ExceptionMiddleware>();
-
 app.Run();
