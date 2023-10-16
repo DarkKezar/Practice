@@ -1,5 +1,5 @@
 using Cafe.Domain.Entities;
-using Cafe.Application.ApiResult;
+using Cafe.Application.OperationResult;
 using Cafe.Application.DTO;
 using Cafe.Application.Interfaces;
 using Cafe.Domain.Entities;
@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Cafe.Application.UseCases.DishCases.Get;
 
-public class GetDishQueryHandler : IRequestHandler<GetDishQuery, IApiResult>
+public class GetDishQueryHandler : IRequestHandler<GetDishQuery, IOperationResult>
 {
     private readonly IMapper _mapper;
     private readonly IDishRepository _dishRepository;
@@ -17,12 +17,12 @@ public class GetDishQueryHandler : IRequestHandler<GetDishQuery, IApiResult>
     public GetDishQueryHandler(IMapper mapper, IDishRepository repository)
         => (_mapper, _dishRepository) = (mapper, repository);
 
-    public async Task<IApiResult> Handle(GetDishQuery request, CancellationToken cancellationToken)
+    public async Task<IOperationResult> Handle(GetDishQuery request, CancellationToken cancellationToken)
     {
         var dish = await _dishRepository.GetByIdAsync((Guid)request.Id);
         if(dish == null) 
         {
-            throw new Exception(Messages.NotFound);
+            throw new OperationWebException(Messages.NotFound, (HttpStatusCode)404);
         }
         var result = _mapper.Map<Dish, GetDishQueryResponse>(dish);
         

@@ -1,5 +1,5 @@
 using Cafe.Domain.Entities;
-using Cafe.Application.ApiResult;
+using Cafe.Application.OperationResult;
 using Cafe.Application.DTO;
 using Cafe.Application.Interfaces;
 using Cafe.Domain.Entities;
@@ -10,7 +10,7 @@ using FluentValidation;
 
 namespace Cafe.Application.UseCases.EmployeeCases.Create;
 
-public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeCommand, IApiResult>
+public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeCommand, IOperationResult>
 {
     private readonly IMapper _mapper;
     private readonly IEmployeeRepository _employeeRepository;
@@ -23,7 +23,7 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
         _validator = validator;
     }
 
-    public async Task<IApiResult> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
+    public async Task<IOperationResult> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
         var validationResult = await _validator.ValidateAsync(request);
         if(!validationResult.IsValid)

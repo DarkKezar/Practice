@@ -6,6 +6,7 @@ public static class Messages
     public static readonly string Success = "Success";
     public static readonly string NotFound = "Not found";
     public static readonly string InvalidData = "Invalid data";
+    public static readonly string BadRequest = "BadRequest";
     public static readonly string AnotherMessage = "oops. Another message";
     public static readonly string DishesCount = "Bill must have one or more dishes!";
     public static readonly string IngridientsCount = "Dish must have one or more ingridients!";

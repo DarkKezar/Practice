@@ -1,5 +1,5 @@
 using Cafe.Domain.Entities;
-using Cafe.Application.ApiResult;
+using Cafe.Application.OperationResult;
 using Cafe.Application.DTO;
 using Cafe.Application.Interfaces;
 using Cafe.Domain.Entities;
@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Cafe.Application.UseCases.BillCases.Get;
 
-public class GetAllBillQueryHandler : IRequestHandler<GetAllBillQuery, IApiResult>
+public class GetAllBillQueryHandler : IRequestHandler<GetAllBillQuery, IOperationResult>
 {
     private readonly IMapper _mapper;
     private readonly IBillRepository _billRepository;
@@ -17,13 +17,13 @@ public class GetAllBillQueryHandler : IRequestHandler<GetAllBillQuery, IApiResul
     public GetAllBillQueryHandler(IMapper mapper, IBillRepository repository)
         => (_mapper, _billRepository) = (mapper, repository);
 
-    public async Task<IApiResult> Handle(GetAllBillQuery request, CancellationToken cancellationToken)
+    public async Task<IOperationResult> Handle(GetAllBillQuery request, CancellationToken cancellationToken)
     {
-        
-        var bill = (await _billRepository.GetAllAsync())
-                    .Skip(request.Page * request.Count)
-                    .Take(request.Count)
-                    .ToList();
+        if(request.Page < 0 || request.Count < 0)
+        {
+            throw new OperationWebException(Messages.BadRequest, (HttpStatusCode)400);
+        }
+        var bill = await _billRepository.GetAllAsync(request.Page, request.Count);
         var result = _mapper.Map<List<GetBillQueryResponse>>(bill);
         
         return new OperationResult<List<GetBillQueryResponse>>(Messages.Success, HttpStatusCode.OK, result);

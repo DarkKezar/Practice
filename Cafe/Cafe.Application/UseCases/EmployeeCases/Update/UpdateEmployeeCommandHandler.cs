@@ -1,5 +1,5 @@
 using Cafe.Domain.Entities;
-using Cafe.Application.ApiResult;
+using Cafe.Application.OperationResult;
 using Cafe.Application.DTO;
 using Cafe.Application.Interfaces;
 using Cafe.Domain.Entities;
@@ -10,7 +10,7 @@ using FluentValidation;
 
 namespace Cafe.Application.UseCases.EmployeeCases.Update;
 
-public class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmployeeCommand, IApiResult>
+public class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmployeeCommand, IOperationResult>
 {
     private readonly IMapper _mapper;
     private readonly IEmployeeRepository _employeeRepository;
@@ -23,12 +23,12 @@ public class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmployeeComman
         _validator = validator;
     }
 
-    public async Task<IApiResult> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
+    public async Task<IOperationResult> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
     {
         var validationResult = await _validator.ValidateAsync(request);
         if(!validationResult.IsValid)
         {
-            throw new Exception(validationResult.ToString("|"));
+            throw new OperationWebException(validationResult.ToString("|"), (HttpStatusCode)400);
         }
         var employee = await _employeeRepository.GetByIdAsync(request.Id);
         _mapper.Map(request, employee);

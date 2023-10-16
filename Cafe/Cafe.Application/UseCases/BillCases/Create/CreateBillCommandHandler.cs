@@ -1,5 +1,5 @@
 using Cafe.Domain.Entities;
-using Cafe.Application.ApiResult;
+using Cafe.Application.OperationResult;
 using Cafe.Application.DTO;
 using Cafe.Application.Interfaces;
 using Cafe.Domain.Entities;
@@ -10,7 +10,7 @@ using FluentValidation;
 
 namespace Cafe.Application.UseCases.BillCases.Create;
 
-public class CreateBillCommandHandler : IRequestHandler<CreateBillCommand, IApiResult>
+public class CreateBillCommandHandler : IRequestHandler<CreateBillCommand, IOperationResult>
 {
     private readonly IMapper _mapper;
     private readonly IBillRepository _billRepository;
@@ -23,12 +23,12 @@ public class CreateBillCommandHandler : IRequestHandler<CreateBillCommand, IApiR
         _validator = validator;
     }
 
-    public async Task<IApiResult> Handle(CreateBillCommand request, CancellationToken cancellationToken)
+    public async Task<IOperationResult> Handle(CreateBillCommand request, CancellationToken cancellationToken)
     {
         var validationResult = await _validator.ValidateAsync(request);
-        if(validationResult.IsValid)
+        if(!validationResult.IsValid)
         {
-            throw new Exception(validationResult.ToString("|"));
+            throw new OperationWebException(validationResult.ToString("|"), (HttpStatusCode)400);
         }
 
         var bill = _mapper.Map<CreateBillCommand, Bill>(request);

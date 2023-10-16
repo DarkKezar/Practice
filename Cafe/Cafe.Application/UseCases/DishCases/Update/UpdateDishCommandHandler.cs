@@ -1,5 +1,5 @@
 using Cafe.Domain.Entities;
-using Cafe.Application.ApiResult;
+using Cafe.Application.OperationResult;
 using Cafe.Application.DTO;
 using Cafe.Application.Interfaces;
 using Cafe.Domain.Entities;
@@ -10,7 +10,7 @@ using FluentValidation;
 
 namespace Cafe.Application.UseCases.DishCases.Update;
 
-public class UpdateDishCommandHandler : IRequestHandler<UpdateDishCommand, IApiResult>
+public class UpdateDishCommandHandler : IRequestHandler<UpdateDishCommand, IOperationResult>
 {
     private readonly IMapper _mapper;
     private readonly IDishRepository _dishRepository;
@@ -23,12 +23,12 @@ public class UpdateDishCommandHandler : IRequestHandler<UpdateDishCommand, IApiR
         _validator = validator;
     }
 
-    public async Task<IApiResult> Handle(UpdateDishCommand request, CancellationToken cancellationToken)
+    public async Task<IOperationResult> Handle(UpdateDishCommand request, CancellationToken cancellationToken)
     {
         var validationResult = await _validator.ValidateAsync(request);
         if(!validationResult.IsValid)
         {
-            throw new Exception(validationResult.ToString("|"));
+            throw new OperationWebException(validationResult.ToString("|"), (HttpStatusCode)400);
         }
         var dish = await _dishRepository.GetByIdAsync(request.Id);
         _mapper.Map(request, dish);

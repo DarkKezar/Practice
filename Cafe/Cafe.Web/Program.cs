@@ -1,4 +1,3 @@
-
 using Cafe.Web.Middlewares;
 using Cafe.Web.Extenssions;
 using Cafe.Application.UseCases.BillCases.Get;
@@ -25,14 +24,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
-//app.UseMiddleware<ExceptionMiddleware>();
-
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.Run();

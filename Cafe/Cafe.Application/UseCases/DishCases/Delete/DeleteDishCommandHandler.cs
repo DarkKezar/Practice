@@ -1,4 +1,4 @@
-using Cafe.Application.ApiResult;
+using Cafe.Application.OperationResult;
 using Cafe.Application.DTO;
 using Cafe.Application.Interfaces;
 using System.Net;
@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Cafe.Application.UseCases.DishCases.Delete;
 
-public class DeleteDishCommandHandler : IRequestHandler<DeleteDishCommand, IApiResult>
+public class DeleteDishCommandHandler : IRequestHandler<DeleteDishCommand, IOperationResult>
 {
     private readonly IDishRepository _dishRepository;
 
@@ -15,7 +15,7 @@ public class DeleteDishCommandHandler : IRequestHandler<DeleteDishCommand, IApiR
         _dishRepository = repository;
     }
 
-    public async Task<IApiResult> Handle(DeleteDishCommand request, CancellationToken cancellationToken)
+    public async Task<IOperationResult> Handle(DeleteDishCommand request, CancellationToken cancellationToken)
     {
         var dish = await _dishRepository.GetByIdAsync(request.Id);
         await _dishRepository.DeleteAsync(dish);

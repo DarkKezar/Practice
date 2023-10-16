@@ -1,10 +1,10 @@
 using MediatR;
 using Cafe.Domain.Entities;
-using Cafe.Application.ApiResult;
+using Cafe.Application.OperationResult;
 
 namespace Cafe.Application.UseCases.DishCases.Update;
 
-public class UpdateDishCommand : IRequest<IApiResult>
+public class UpdateDishCommand : IRequest<IOperationResult>
 {
     public Guid Id { get; set; }
     public decimal? Price { get; set; }

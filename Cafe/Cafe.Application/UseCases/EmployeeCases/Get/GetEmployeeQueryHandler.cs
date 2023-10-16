@@ -1,5 +1,5 @@
 using Cafe.Domain.Entities;
-using Cafe.Application.ApiResult;
+using Cafe.Application.OperationResult;
 using Cafe.Application.DTO;
 using Cafe.Application.Interfaces;
 using Cafe.Domain.Entities;
@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Cafe.Application.UseCases.EmployeeCases.Get;
 
-public class GetEmployeeQueryHandler : IRequestHandler<GetEmployeeQuery, IApiResult>
+public class GetEmployeeQueryHandler : IRequestHandler<GetEmployeeQuery, IOperationResult>
 {
     private readonly IMapper _mapper;
     private readonly IEmployeeRepository _employeeRepository;
@@ -17,12 +17,12 @@ public class GetEmployeeQueryHandler : IRequestHandler<GetEmployeeQuery, IApiRes
     public GetEmployeeQueryHandler(IMapper mapper, IEmployeeRepository repository)
         => (_mapper, _employeeRepository) = (mapper, repository);
 
-    public async Task<IApiResult> Handle(GetEmployeeQuery request, CancellationToken cancellationToken)
+    public async Task<IOperationResult> Handle(GetEmployeeQuery request, CancellationToken cancellationToken)
     {
         var employee = await _employeeRepository.GetByIdAsync((Guid)request.Id);
         if(employee == null)
         {
-            throw new Exception(Messages.NotFound);
+            throw new OperationWebException(Messages.NotFound, (HttpStatusCode)404);
         } 
         var result = _mapper.Map<Employee, GetEmployeeQueryResponse>(employee);
         

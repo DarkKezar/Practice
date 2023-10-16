@@ -1,10 +1,10 @@
 using MediatR;
 using Cafe.Domain.Entities;
-using Cafe.Application.ApiResult;
+using Cafe.Application.OperationResult;
 
 namespace Cafe.Application.UseCases.EmployeeCases.Update;
 
-public class UpdateEmployeeCommand : IRequest<IApiResult>
+public class UpdateEmployeeCommand : IRequest<IOperationResult>
 {
     public Guid Id { get; set; }
     public string Biography { get; set; }

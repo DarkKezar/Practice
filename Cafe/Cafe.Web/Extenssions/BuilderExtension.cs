@@ -10,7 +10,7 @@ using Cafe.Application.UseCases.DishCases.Update;
 using Cafe.Application.UseCases.EmployeeCases.Create;
 using Cafe.Application.UseCases.EmployeeCases.Get;
 using Cafe.Application.UseCases.EmployeeCases.Update;
-using Cafe.Application.ApiResult;
+using Cafe.Application.OperationResult;
 using Cafe.Application.Validators;
 using Cafe.Application.AutoMappers;
 using System.Text;

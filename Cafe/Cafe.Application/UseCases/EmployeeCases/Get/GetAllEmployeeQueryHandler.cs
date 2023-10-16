@@ -1,5 +1,5 @@
 using Cafe.Domain.Entities;
-using Cafe.Application.ApiResult;
+using Cafe.Application.OperationResult;
 using Cafe.Application.DTO;
 using Cafe.Application.Interfaces;
 using Cafe.Domain.Entities;
@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Cafe.Application.UseCases.EmployeeCases.Get;
 
-public class GetAllEmployeeQueryHandler : IRequestHandler<GetAllEmployeeQuery, IApiResult>
+public class GetAllEmployeeQueryHandler : IRequestHandler<GetAllEmployeeQuery, IOperationResult>
 {
     private readonly IMapper _mapper;
     private readonly IEmployeeRepository _employeeRepository;
@@ -17,12 +17,13 @@ public class GetAllEmployeeQueryHandler : IRequestHandler<GetAllEmployeeQuery, I
     public GetAllEmployeeQueryHandler(IMapper mapper, IEmployeeRepository repository)
         => (_mapper, _employeeRepository) = (mapper, repository);
 
-    public async Task<IApiResult> Handle(GetAllEmployeeQuery request, CancellationToken cancellationToken)
+    public async Task<IOperationResult> Handle(GetAllEmployeeQuery request, CancellationToken cancellationToken)
     {
-        var employee = (await _employeeRepository.GetAllAsync())
-                    .Skip(request.Page * request.Count)
-                    .Take(request.Count)
-                    .ToList();
+        if(request.Page < 0 || request.Count < 0)
+        {
+            throw new OperationWebException(Messages.BadRequest, (HttpStatusCode)400);
+        }
+        var employee = await _employeeRepository.GetAllAsync(request.Page, request.Count);
         var result = _mapper.Map<List<GetEmployeeQueryResponse>>(employee);
         
         return new OperationResult<List<GetEmployeeQueryResponse>>(Messages.Success, HttpStatusCode.OK, result);

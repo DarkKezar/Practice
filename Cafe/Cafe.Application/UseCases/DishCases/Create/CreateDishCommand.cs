@@ -1,10 +1,10 @@
 using MediatR;
 using Cafe.Domain.Entities;
-using Cafe.Application.ApiResult;
+using Cafe.Application.OperationResult;
 
 namespace Cafe.Application.UseCases.DishCases.Create;
 
-public class CreateDishCommand : IRequest<IApiResult>
+public class CreateDishCommand : IRequest<IOperationResult>
 {
     public string Name { get; set; }
     public decimal Price { get; set; }
