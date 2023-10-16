@@ -18,7 +18,7 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
     public async Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var r = (await _collection.FindAsync(new BsonDocument("_id", id))).ToList();
-        if(r == null)
+        if(r.Count == 0)
         {
             throw new Exception(Messages.NotFound);
         }

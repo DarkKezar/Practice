@@ -10,13 +10,13 @@ using FluentValidation;
 
 namespace Cafe.Application.UseCases.DishCases.Create;
 
-public class CreateDishCommandHadler : IRequestHandler<CreateDishCommand, IApiResult>
+public class CreateDishCommandHandler : IRequestHandler<CreateDishCommand, IApiResult>
 {
     private readonly IMapper _mapper;
     private readonly IDishRepository _dishRepository;
     private readonly IValidator<CreateDishCommand> _validator;
 
-    public CreateDishCommandHadler(IMapper mapper, IDishRepository repository, IValidator<CreateDishCommand> validator)
+    public CreateDishCommandHandler(IMapper mapper, IDishRepository repository, IValidator<CreateDishCommand> validator)
     {
         _mapper = mapper;
         _dishRepository = repository;

@@ -11,7 +11,7 @@ public class EmployeeProfile : Profile
     public EmployeeProfile()
     {
         CreateMap<CreateEmployeeCommand, Employee>();
-        CreateMap<UpdateEmployeeCommand, Employee>();
+        CreateMap<UpdateEmployeeCommand, Employee>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         CreateMap<Employee, GetEmployeeQueryResponse>();
     }
 }

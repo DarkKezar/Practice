@@ -1,6 +1,7 @@
 using Cafe.Domain.Entities;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using Microsoft.Extensions.Options;
  
 namespace Cafe.Infrastructure.Data.DBContext;
 
@@ -9,8 +10,9 @@ public class AppDbContext
     public readonly MongoClient _mongoClient;
     public readonly CafeDatabaseSettings _settings;
 
-    public AppDbContext(CafeDatabaseSettings settings){
-        _settings = settings;
+    public AppDbContext(IOptions<CafeDatabaseSettings> settings){
+        
+        _settings = settings.Value;
         _mongoClient = new MongoClient(_settings.ConnectionString);
     }
 
