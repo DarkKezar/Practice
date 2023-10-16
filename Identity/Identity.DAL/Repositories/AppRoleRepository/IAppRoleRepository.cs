@@ -4,5 +4,5 @@ namespace Identity.DAL.Repositories.AppRoleRepository;
 
 public interface IAppRoleRepository
 {
-    public Task<IQueryable<AppRole>> GetAllAppRoleAsync();
+    Task<IList<AppRole>> GetAllAppRoleAsync(int page, int count, CancellationToken cancellationToken);
 }

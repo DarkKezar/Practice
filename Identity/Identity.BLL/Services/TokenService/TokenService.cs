@@ -11,19 +11,16 @@ namespace Identity.BLL.Services.TokenService;
 
 public class TokenService : ITokenService
 {
-    private readonly IAppUserRepository _appUserRepository;
     private readonly UserManager<AppUser> _userManager;
     private readonly JWTConfig _config;
 
-    public TokenService(IAppUserRepository appUserRepository, JWTConfig config, UserManager<AppUser> userManager)
+    public TokenService(JWTConfig config, UserManager<AppUser> userManager)
     {
-        _appUserRepository = appUserRepository;
         _config = config;
         _userManager = userManager;
     }
 
-
-    public async Task<string> GenerateJWTAsync(AppUser user)
+    public async Task<string> GenerateJWTAsync(AppUser user, CancellationToken cancellationToken = default)
     {
         List<Claim> claims = new List<Claim>() { new Claim(ClaimTypes.Sid, user.Id.ToString()) };
         claims.AddRange((await _userManager.GetRolesAsync(user)).Select(r => new Claim(ClaimTypes.Role, r)));

@@ -6,7 +6,7 @@ namespace Identity.Web.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController : Controller
 {
     private readonly IAuthService _authService;
 
@@ -16,8 +16,10 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> AuthAsync([FromBody]AuthModel model)
+    public async Task<IActionResult> AuthAsync([FromBody]AuthModel model, CancellationToken cancellationToken = default)
     {
-        return (await _authService.AuthAccountAsync(model)).Convert();
+        var result = await _authService.AuthAccountAsync(model, cancellationToken);
+        
+        return result.Convert();
     }
 }

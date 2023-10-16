@@ -4,7 +4,7 @@ namespace Identity.DAL.Repositories.AppUserRepository;
 
 public interface IAppUserRepository
 {
-    public Task<AppUser> GetAppUserAsync(Guid id);
-    public Task<AppUser> GetAppUserAsync(string email);
-    public Task<IQueryable<AppUser>> GetAllAppUserAsync();
+    Task<AppUser> GetAppUserAsync(Guid id, CancellationToken cancellationToken);
+    Task<AppUser> GetAppUserAsync(string email, CancellationToken cancellationToken);
+    Task<IList<AppUser>> GetAllAppUserAsync(int page, int count, CancellationToken cancellationToken);
 }

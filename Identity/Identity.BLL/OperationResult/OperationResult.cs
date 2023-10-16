@@ -1,9 +1,9 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Identity.BLL.CustomResult;
+namespace Identity.BLL.OperationResult;
 
-public class OperationResult<T> : IApiResult 
+public class OperationResult<T> : IOperationResult 
 {
     public readonly string Message;
     public readonly HttpStatusCode HttpStatusCode;
@@ -18,14 +18,8 @@ public class OperationResult<T> : IApiResult
 
     public IActionResult Convert()
     {
-        Object Result = new {
-            Message = Message,
-            Value = ObjectResult
-        };
+        Object Result = new { Message = Message, Value = ObjectResult };
 
-        
-        return new ObjectResult(Result){
-            StatusCode = (int)HttpStatusCode
-        };
+        return new ObjectResult(Result){ StatusCode = (int)HttpStatusCode };
     }
 }

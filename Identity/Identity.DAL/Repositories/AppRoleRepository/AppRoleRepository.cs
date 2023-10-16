@@ -1,5 +1,8 @@
 using Identity.DAL.Context;
 using Identity.DAL.Models;
+using Identity.DAL.Repositories.Extensions;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Identity.DAL.Repositories.AppRoleRepository;
 
@@ -12,8 +15,8 @@ public class AppRoleRepository : IAppRoleRepository
         _context = context;
     }
 
-    public async Task<IQueryable<AppRole>> GetAllAppRoleAsync() 
+    public async Task<IList<AppRole>> GetAllAppRoleAsync(int page, int count, CancellationToken cancellationToken) 
     { 
-        return _context.Roles;    
+        return await _context.Roles.AsNoTracking().Pagination(count, page).ToListAsync();    
     }
 }

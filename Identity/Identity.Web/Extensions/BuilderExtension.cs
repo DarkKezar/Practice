@@ -26,11 +26,13 @@ public static class BuilderExtension
                 (options => options.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
         builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppIdentityContext>();    
     }
+
     public static void RepositoriesRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.AddTransient<IAppUserRepository, AppUserRepository>();
         builder.Services.AddTransient<IAppRoleRepository, AppRoleRepository>(); 
     }
+    
     public static void ServicesRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<ITokenService, TokenService>();    
@@ -41,6 +43,7 @@ public static class BuilderExtension
     public static void AutomappersRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.AddAutoMapper(typeof(UserProfile));
+        builder.Services.AddAutoMapper(typeof(RoleProfile));
     }
 
     public static void AnotherDIRegistration(this WebApplicationBuilder builder)

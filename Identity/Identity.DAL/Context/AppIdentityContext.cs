@@ -11,5 +11,4 @@ public class AppIdentityContext : IdentityDbContext<AppUser, AppRole, Guid>
 
     public AppIdentityContext(DbContextOptions<AppIdentityContext> options) : base(options)
     { }
-
 }

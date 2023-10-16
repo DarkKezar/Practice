@@ -4,5 +4,5 @@ namespace Identity.BLL.Services.TokenService;
 
 public interface ITokenService
 {
-    public Task<string> GenerateJWTAsync(AppUser user);
+    Task<string> GenerateJWTAsync(AppUser user, CancellationToken cancellationToken = default);
 }

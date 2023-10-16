@@ -1,9 +1,8 @@
 using System.Net;
 using Identity.BLL.DTO;
-using Identity.BLL.DTO.UpdateDTO;
 using Identity.DAL.Models;
 using Identity.DAL.Repositories.AppUserRepository;
-using Identity.BLL.CustomResult;
+using Identity.BLL.OperationResult;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 
@@ -22,18 +21,22 @@ public class AppUserService : IAppUserService
         _mapper = mapper;
     }
     
-    public async Task<IApiResult> CreateAppUserAsync(SignUpModel model)
+    public async Task<IOperationResult> CreateAppUserAsync(SignUpModel model, CancellationToken cancellationToken = default)
     {
-        AppUser user = _mapper.Map<AppUser>(model);
-        var result = await  _userManager.CreateAsync(user, model.Password);
+        var user = _mapper.Map<AppUser>(model);
+        await  _userManager.CreateAsync(user, model.Password);
+        var result = _mapper.Map<GetAppUserDTO>(user);
 
-        return new OperationResult<AppUser>(Messages.Created, HttpStatusCode.Created, user);
+        return new OperationResult<GetAppUserDTO>(Messages.Created, HttpStatusCode.Created, result);
     }
 
-    public async Task<IApiResult> DeleteAppUserAsync(string email)
+    public async Task<IOperationResult> DeleteAppUserAsync(string email, CancellationToken cancellationToken = default)
     {
-        AppUser user = await _appUserRepository.GetAppUserAsync(email);
-        if(user == null) throw new Exception(Messages.NoSuchUser);
+        var user = await _appUserRepository.GetAppUserAsync(email, cancellationToken);
+        if(user == null)
+        {
+            throw new OperationWebException(Messages.NoSuchUser, (HttpStatusCode)404);
+        } 
         user.IsDeleted = true;
         await _userManager.UpdateAsync(user);  
 
@@ -41,70 +44,71 @@ public class AppUserService : IAppUserService
         return new OperationResult<Object>(Messages.Success, HttpStatusCode.OK);
     }
 
-    public async Task<IApiResult> GetAllAppUserAsync(int page = 1, int count = 10)
+    public async Task<IOperationResult> GetAllAppUserAsync(int page = 1, int count = 10, CancellationToken cancellationToken = default)
     {
-        List<AppUser> users = (await _appUserRepository.GetAllAppUserAsync())
-                                    .Skip((page - 1) * count).Take(count).ToList();
+        var users = await _appUserRepository.GetAllAppUserAsync(page, count, cancellationToken);
+        var result = _mapper.Map<IList<GetAppUserDTO>>(users);
 
-        return new OperationResult<List<AppUser>>(Messages.Success, HttpStatusCode.OK, users);
+        return new OperationResult<IList<GetAppUserDTO>>(Messages.Success, HttpStatusCode.OK, result);
     }
 
-    public async Task<IApiResult> GetAppUserAsync(string email)
+    public async Task<IOperationResult> GetAppUserAsync(string email, CancellationToken cancellationToken = default)
     {
-        AppUser user = await _appUserRepository.GetAppUserAsync(email);
-        if(user == null) throw new Exception(Messages.NoSuchUser);
-        return new OperationResult<AppUser>(Messages.Success, HttpStatusCode.OK, user);
+        var user = await _appUserRepository.GetAppUserAsync(email, cancellationToken);
+        if(user == null)
+        {
+            throw new OperationWebException(Messages.NoSuchUser, (HttpStatusCode)404);
+        } 
+        var result = _mapper.Map<GetAppUserDTO>(user);
+
+        return new OperationResult<GetAppUserDTO>(Messages.Success, HttpStatusCode.OK, result);
     }
 
-    public async Task<IApiResult> UpdateAppUserAsync(UpdateModel model)
+    public async Task<IOperationResult> UpdateAppUserAsync(Guid userId, AppUserUpdateModel model, CancellationToken cancellationToken = default)
     {
-        AppUser user = await _appUserRepository.GetAppUserAsync(model.AuthData.Email);
-        if(user != null)
+        throw new Exception();
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if(user == null)
         {
-            if((await _userManager.CheckPasswordAsync(user, model.AuthData.Password)) == true)
-            {
-                if(model is AppUserUpdateModel)
-                {
-                    AppUserUpdateModel updModel = (AppUserUpdateModel)model;
+            throw new OperationWebException(Messages.NoSuchUser, (HttpStatusCode)404);
+        } 
+        _mapper.Map(model, user);
+        await _userManager.UpdateAsync(user);
+        
+        return new OperationResult<Object>(Messages.Success, HttpStatusCode.OK);
+    }
 
-                    //if(Model.Email != null)
-                        //another logic
-                    if(updModel.PhotoSrc != null)
-                        user.PhotoSrc = updModel.PhotoSrc;
-
-                    await _userManager.UpdateAsync(user);
-                } else if (model is PasswordUpdateModel)
-                {
-                    PasswordUpdateModel updModel = (PasswordUpdateModel)model;
-
-                    await _userManager.ResetPasswordAsync(user, model.AuthData.Password, updModel.NewPassword);
-                }
-            } else 
-            {
-                throw new Exception(Messages.InvalidPassword);
-            }
-        } else 
+    public async Task<IOperationResult> UpdateAppUserPasswrodAsync(Guid userId, PasswordUpdateModel model, CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if(user == null)
         {
-            throw new Exception(Messages.InvalidEmail);
+            throw new OperationWebException(Messages.NoSuchUser, (HttpStatusCode)404);
         }
-       
+        await _userManager.ResetPasswordAsync(user, model.OldPassword, model.NewPassword);
 
         return new OperationResult<Object>(Messages.Success, HttpStatusCode.OK);
     }
 
-    public async Task<IApiResult> AddToRoleAsync(string email, string role)
+    public async Task<IOperationResult> AddToRoleAsync(string email, string role, CancellationToken cancellationToken = default)
     {
-        AppUser user = await _appUserRepository.GetAppUserAsync(email);
-        if(user == null) throw new Exception(Messages.NoSuchUser);
+        var user = await _appUserRepository.GetAppUserAsync(email, cancellationToken);
+        if(user == null)
+        {
+            throw new OperationWebException(Messages.NoSuchUser, (HttpStatusCode)404);
+        } 
         await _userManager.AddToRoleAsync(user, role);
 
         return new OperationResult<Object>(Messages.Success, HttpStatusCode.OK);
     }
 
-    public async Task<IApiResult> RemoveFromRoleAsync(string email, string role)
+    public async Task<IOperationResult> RemoveFromRoleAsync(string email, string role, CancellationToken cancellationToken = default)
     {        
-        AppUser user = await _appUserRepository.GetAppUserAsync(email);
-        if(user == null) throw new Exception(Messages.NoSuchUser);
+        var user = await _appUserRepository.GetAppUserAsync(email, cancellationToken);
+        if(user == null)
+        {
+            throw new OperationWebException(Messages.NoSuchUser, (HttpStatusCode)404);
+        } 
         await _userManager.RemoveFromRoleAsync(user, role);
         
         return new OperationResult<Object>(Messages.Success, HttpStatusCode.OK);

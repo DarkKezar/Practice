@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Identity.BLL.Services.AppUserService;
 using Identity.BLL.DTO;
-using Identity.BLL.DTO.UpdateDTO;
+using Identity.Web.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Identity.Web.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class UserController : ControllerBase
+public class UserController : Controller
 {
     private readonly IAppUserService _appUserService;
 
@@ -18,34 +19,46 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Route("{email}")]
-    public async Task<IActionResult> GetUserAsync(string email)
+    public async Task<IActionResult> GetUserAsync(string email, CancellationToken cancellationToken = default)
     {
-        return (await _appUserService.GetAppUserAsync(email)).Convert();
+        var result = await _appUserService.GetAppUserAsync(email, cancellationToken);
+
+        return result.Convert();
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetUsersAsync(int page = 1, int count = 10)
+    public async Task<IActionResult> GetUsersAsync(int page = 1, int count = 10, CancellationToken cancellationToken = default)
     {
-        return (await _appUserService.GetAllAppUserAsync(page, count)).Convert();
+        var result = await _appUserService.GetAllAppUserAsync(page, count, cancellationToken);
+
+        return result.Convert();
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUserAsync([FromBody] SignUpModel model)
+    public async Task<IActionResult> CreateUserAsync([FromBody] SignUpModel model, CancellationToken cancellationToken = default)
     {
-        return (await _appUserService.CreateAppUserAsync(model)).Convert();
+        var result = await _appUserService.CreateAppUserAsync(model, cancellationToken);
+
+        return result.Convert();
     }
 
     [HttpPatch]
+    [Authorize]
     [Route("password")]
-    public async Task<IActionResult> ResetPasswordAsync([FromBody] PasswordUpdateModel model)
+    public async Task<IActionResult> ResetPasswordAsync([FromBody] PasswordUpdateModel model, CancellationToken cancellationToken = default)
     {
-        return (await _appUserService.UpdateAppUserAsync(model)).Convert();
+        var result = await _appUserService.UpdateAppUserPasswrodAsync(this.GetCurrentUserId(), model, cancellationToken);
+
+        return result.Convert();
     }
 
     [HttpPatch]
+    [Authorize]
     [Route("user-data")]
-    public async Task<IActionResult> PatchUserDataAsync([FromBody] AppUserUpdateModel model)
+    public async Task<IActionResult> PatchUserDataAsync([FromBody] AppUserUpdateModel model, CancellationToken cancellationToken = default)
     {
-        return (await _appUserService.UpdateAppUserAsync(model)).Convert();
+        var result = await _appUserService.UpdateAppUserAsync(this.GetCurrentUserId(), model, cancellationToken);
+        
+        return result.Convert();
     }
 }

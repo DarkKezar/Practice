@@ -5,7 +5,7 @@ namespace Identity.Web.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class RoleController : ControllerBase
+public class RoleController : Controller
 {
     private readonly IAppRoleService _appRoleService;
 
@@ -15,27 +15,35 @@ public class RoleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetRolesAsync(int page = 1, int count = 10)
+    public async Task<IActionResult> GetRolesAsync(int page = 1, int count = 10, CancellationToken cancellationToken = default)
     {
-        return (await _appRoleService.GetRolesAsync(page, count)).Convert();
+        var result = await _appRoleService.GetRolesAsync(page, count, cancellationToken);
+
+        return result.Convert();
     }
 
     [HttpGet]
     [Route("{name}")]
-    public async Task<IActionResult> GetRoleAsync(string name)
+    public async Task<IActionResult> GetRoleAsync(string name, CancellationToken cancellationToken = default)
     {
-        return (await _appRoleService.GetRoleAsync(name)).Convert();
+        var result = await _appRoleService.GetRoleAsync(name, cancellationToken);
+
+        return result.Convert();
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateRoleAsync(string name)
+    public async Task<IActionResult> CreateRoleAsync(string name, CancellationToken cancellationToken = default)
     {
-        return (await _appRoleService.CreateRoleAsync(name)).Convert();
+        var result = await _appRoleService.CreateRoleAsync(name, cancellationToken);
+
+        return result.Convert();
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteRoleAsync(string name)
+    public async Task<IActionResult> DeleteRoleAsync(string name, CancellationToken cancellationToken = default)
     {
-        return (await _appRoleService.DeleteRoleAsync(name)).Convert();
+        var result = await _appRoleService.DeleteRoleAsync(name, cancellationToken);
+        
+        return result.Convert();
     }
 }
