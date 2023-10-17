@@ -3,6 +3,7 @@ using Cafe.Application.OperationResult;
 using Cafe.Application.DTO;
 using Cafe.Application.Interfaces;
 using Cafe.Domain.Entities;
+using Cafe.Application.Exceptions;
 using AutoMapper;
 using System.Net;
 using MediatR;
@@ -25,7 +26,7 @@ public class UpdateDishCommandHandler : IRequestHandler<UpdateDishCommand, IOper
 
     public async Task<IOperationResult> Handle(UpdateDishCommand request, CancellationToken cancellationToken)
     {
-        var validationResult = await _validator.ValidateAsync(request);
+        var validationResult = await _validator.ValidateAsync(request, cancellationToken);
         if(!validationResult.IsValid)
         {
             throw new OperationWebException(validationResult.ToString("|"), (HttpStatusCode)400);

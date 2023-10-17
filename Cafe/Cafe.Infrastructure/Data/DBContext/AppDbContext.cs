@@ -7,14 +7,13 @@ namespace Cafe.Infrastructure.Data.DBContext;
 
 public class AppDbContext
 {
-    public readonly MongoClient _mongoClient;
+    public readonly IMongoClient _mongoClient;
     public readonly CafeDatabaseSettings _settings;
 
-    public AppDbContext(IOptions<CafeDatabaseSettings> settings)
+    public AppDbContext(IOptions<CafeDatabaseSettings> settings, IMongoClient mongoClient)
     {
-        
         _settings = settings.Value;
-        _mongoClient = new MongoClient(_settings.ConnectionString);
+        _mongoClient = mongoClient;
     }
 
     public IMongoCollection<Bill> GetBillCollection()

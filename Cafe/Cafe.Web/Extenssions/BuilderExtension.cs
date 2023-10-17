@@ -17,7 +17,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using FluentValidation;
 using MediatR;
-
+using MongoDB.Driver;
 
 namespace Cafe.Web.Extenssions;
 
@@ -27,6 +27,9 @@ public static class BuilderExtension
     {
         builder.Services.Configure<CafeDatabaseSettings>(
             builder.Configuration.GetSection("CafeDatabase"));
+        builder.Services.AddSingleton<IMongoClient>(s => 
+            new MongoClient(builder.Configuration.GetSection("CafeDatabase")["ConnectionString"])
+        );
         builder.Services.AddSingleton<AppDbContext>();
     }
 

@@ -1,6 +1,7 @@
 using Cafe.Domain.Entities;
 using Cafe.Application.OperationResult;
 using Cafe.Application.DTO;
+using Cafe.Application.Exceptions;
 using Cafe.Application.Interfaces;
 using Cafe.Domain.Entities;
 using AutoMapper;
@@ -25,10 +26,10 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
 
     public async Task<IOperationResult> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var validationResult = await _validator.ValidateAsync(request);
+        var validationResult = await _validator.ValidateAsync(request, cancellationToken);
         if(!validationResult.IsValid)
         {
-            throw new Exception(validationResult.ToString("|"));
+            throw new OperationWebException(validationResult.ToString("|"), (HttpStatusCode)400);
         }
         var employee = _mapper.Map<CreateEmployeeCommand, Employee>(request);
         employee = await _employeeRepository.CreateAsync(employee);

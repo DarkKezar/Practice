@@ -2,6 +2,7 @@ using Cafe.Domain.Entities;
 using Cafe.Application.OperationResult;
 using Cafe.Application.DTO;
 using Cafe.Application.Interfaces;
+using Cafe.Application.Exceptions;
 using Cafe.Domain.Entities;
 using AutoMapper;
 using System.Net;

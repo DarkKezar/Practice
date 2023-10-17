@@ -1,6 +1,7 @@
 using Cafe.Domain.Entities;
 using Cafe.Application.OperationResult;
 using Cafe.Application.DTO;
+using Cafe.Application.Exceptions;
 using Cafe.Application.Interfaces;
 using Cafe.Domain.Entities;
 using AutoMapper;

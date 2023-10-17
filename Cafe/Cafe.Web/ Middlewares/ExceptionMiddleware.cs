@@ -1,6 +1,6 @@
 using System.Net;
 using System.Text.Json;
-using Cafe.Application.DTO;
+using Cafe.Application.Exceptions;
 
 namespace Cafe.Web.Middlewares;
 
