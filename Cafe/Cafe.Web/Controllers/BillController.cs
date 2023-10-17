@@ -16,7 +16,7 @@ public class BillController : ControllerBase
 
     [HttpGet]
     [Route("{id}")]
-    public async Task<IActionResult> GetAsync(Guid id, CancellationToken token = default)
+    public async Task<IActionResult> GetAsync(CancellationToken token, Guid id)
     {
         var result = await _mediator.Send(new GetBillQuery(id), token);
 
@@ -24,7 +24,8 @@ public class BillController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync(int page = 1, int count = 10, CancellationToken token = default)
+    [Route("{page}")]
+    public async Task<IActionResult> GetAllAsync(CancellationToken token, int page = 1, [FromBody] int count = 10)
     {
         var result = await _mediator.Send(new GetAllBillQuery(page, count), token);
 
@@ -32,7 +33,7 @@ public class BillController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAsync([FromBody]CreateBillCommand command, CancellationToken token = default)
+    public async Task<IActionResult> CreateAsync(CancellationToken token, [FromBody] CreateBillCommand command)
     {
         var result = await _mediator.Send(command, token);
 

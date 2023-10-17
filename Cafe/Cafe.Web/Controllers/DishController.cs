@@ -18,7 +18,7 @@ public class DishController : ControllerBase
 
     [HttpGet]
     [Route("{id}")]
-    public async Task<IActionResult> GetAsync(Guid id, CancellationToken token = default)
+    public async Task<IActionResult> GetAsync(CancellationToken token, Guid id)
     {
         var result = await _mediator.Send(new GetDishQuery(id), token);
 
@@ -26,7 +26,8 @@ public class DishController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync(int page = 1, int count = 10, CancellationToken token = default)
+    [Route("{page}")]
+    public async Task<IActionResult> GetAllAsync(CancellationToken token, int page = 1, [FromBody] int count = 10)
     {
         var result = await _mediator.Send(new GetAllDishQuery(page, count), token);
 
@@ -34,7 +35,7 @@ public class DishController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAsync([FromBody]CreateDishCommand command, CancellationToken token = default)
+    public async Task<IActionResult> CreateAsync(CancellationToken token, [FromBody] CreateDishCommand command)
     {
         var result = await _mediator.Send(command, token);
 
@@ -43,7 +44,7 @@ public class DishController : ControllerBase
 
     [HttpDelete]
     [Route("{id}")]
-    public async Task<IActionResult> CreateAsync(Guid id, CancellationToken token = default)
+    public async Task<IActionResult> CreateAsync(CancellationToken token, Guid id)
     {
         var result = await _mediator.Send(new DeleteDishCommand(id), token);
 
@@ -51,7 +52,7 @@ public class DishController : ControllerBase
     }
 
     [HttpPatch]
-    public async Task<IActionResult> CreateAsync([FromBody]UpdateDishCommand command, CancellationToken token = default)
+    public async Task<IActionResult> CreateAsync(CancellationToken token, [FromBody] UpdateDishCommand command)
     {
         var result = await _mediator.Send(command, token);
 
