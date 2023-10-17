@@ -1,5 +1,6 @@
 using Cafe.Infrastructure.Data.DBContext;
 using Cafe.Infrastructure.Data.Repositories;
+using Cafe.Infrastructure.MessageBroker;
 using Cafe.Application.Interfaces;
 using Cafe.Application.UseCases.BillCases.Create;
 using Cafe.Application.UseCases.BillCases.Get;
@@ -28,6 +29,13 @@ public static class BuilderExtension
         builder.Services.Configure<CafeDatabaseSettings>(
             builder.Configuration.GetSection("CafeDatabase"));
         builder.Services.AddSingleton<AppDbContext>();
+    }
+
+    public static void MessageBrokerRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.Configure<RabbitMQSettings>(
+            builder.Configuration.GetSection("RabbitMQ"));
+        builder.Services.AddScoped<IMessageBrokerService, RabbitMqService>();
     }
 
     public static void RepositoriesRegistration(this WebApplicationBuilder builder)

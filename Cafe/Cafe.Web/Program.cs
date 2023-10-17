@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.DatabaseRegistration();
+builder.MessageBrokerRegistration();
 builder.RepositoriesRegistration();
 builder.AutomappersRegistration();
 builder.ValidatorsRegistration();
