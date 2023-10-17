@@ -43,9 +43,8 @@ public class RabbitMqListener : BackgroundService
 		consumer.Received += async (ch, ea) =>
 		{
 			var content = JsonSerializer.Deserialize<TransactionCreationDTO>(Encoding.UTF8.GetString(ea.Body.ToArray()));
-            var result = await _transactionService.InsertTransactionAsync(content, stoppingToken);
-
 			_channel.BasicAck(ea.DeliveryTag, false);
+            var result = await _transactionService.InsertTransactionAsync(content, stoppingToken);
 		};
 		_channel.BasicConsume(_rabbitMqSettings.Queue, false, consumer);
 	}
