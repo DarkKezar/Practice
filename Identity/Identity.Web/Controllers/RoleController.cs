@@ -15,7 +15,7 @@ public class RoleController : Controller
     }
 
     [HttpGet]
-    [Route("[page]")]
+    [Route("{page}")]
     public async Task<IActionResult> GetRolesAsync(CancellationToken cancellationToken, int page = 1, [FromBody] int count = 10)
     {
         var result = await _appRoleService.GetRolesAsync(page, count, cancellationToken);

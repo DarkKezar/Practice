@@ -27,7 +27,7 @@ public class UserController : Controller
     }
 
     [HttpGet]
-    [Route("[page]")]
+    [Route("{page}")]
     public async Task<IActionResult> GetUsersAsync(CancellationToken cancellationToken, int page = 1, [FromBody] int count = 10)
     {
         var result = await _appUserService.GetAllAppUserAsync(page, count, cancellationToken);
