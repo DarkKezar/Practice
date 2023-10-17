@@ -2,7 +2,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
-namespace Stock.Application.DTO.OperationResult;
+namespace Stock.Application.OperationResult;
 
 public class OperationResult<T> : IOperationResult
 {

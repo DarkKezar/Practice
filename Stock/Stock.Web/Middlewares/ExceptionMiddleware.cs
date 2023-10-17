@@ -1,6 +1,6 @@
 using System.Net;
 using System.Text.Json;
-using Stock.Application.DTO;
+using Stock.Application.Exceptions;
 
 namespace Stock.Web.Middlewares;
 

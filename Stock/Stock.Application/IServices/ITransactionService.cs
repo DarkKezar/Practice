@@ -1,6 +1,6 @@
 using Stock.Domain.Entities;
 using Stock.Application.DTO;
-using Stock.Application.DTO.OperationResult;
+using Stock.Application.OperationResult;
 
 namespace Stock.Application.IServices;
 

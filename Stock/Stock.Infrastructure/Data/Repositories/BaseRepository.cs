@@ -4,6 +4,7 @@ using Stock.Infrastructure.Data.DBContext;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Stock.Infrastructure.Data.Repositories;
 
@@ -13,15 +14,15 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
 
     public async Task<IList<T>> GetAllAsync(int page, int count, CancellationToken cancellationToken = default)
     {
-        return _collection.AsQueryable().Skip(page * count).Take(count).ToList();
+        return await _collection.AsQueryable().Skip(page * count).Take(count).ToListAsync();
     }
 
-    public async Task<IQueryable<T>> GetIQueryableAsync(CancellationToken cancellationToken = default)
+    public IQueryable<T> GetIQueryable(CancellationToken cancellationToken = default)
     {
         return _collection.AsQueryable();
     }
 
-    public async Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var r = await (await _collection.FindAsync(new BsonDocument("_id", id))).ToListAsync();
         
@@ -36,6 +37,7 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
     public async Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default)
     {
         var result = await _collection.FindOneAndReplaceAsync(new BsonDocument("_id", entity.Id), entity);
+
         return result;
     }
 

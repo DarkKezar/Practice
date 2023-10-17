@@ -10,6 +10,7 @@ using Stock.Application.Automappers;
 using Stock.Application.Validators;
 using Stock.Application.DTO;
 using FluentValidation;
+using MongoDB.Driver;
 
 namespace Stock.Web.Extensions;
 
@@ -19,6 +20,9 @@ public static class BuilderExtensions
     {
         builder.Services.Configure<StockDatabaseSettings>(
             builder.Configuration.GetSection("StockDatabase"));
+        builder.Services.AddSingleton<IMongoClient>(s => 
+            new MongoClient(builder.Configuration.GetSection("StockDatabase")["ConnectionString"])
+        );
         builder.Services.AddSingleton<AppDbContext>();
     }
 
