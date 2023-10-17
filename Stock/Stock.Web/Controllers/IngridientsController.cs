@@ -19,7 +19,8 @@ public class IngridientsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync(int page = 0, int count = 10, CancellationToken cancellationToken = default)
+    [Route("{page}")]
+    public async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken, int page = 0, [FromBody] int count = 10)
     {
         var result = await _ingridientService.GetAllIngridientAsync(page, count, cancellationToken);
 
@@ -28,7 +29,7 @@ public class IngridientsController : Controller
 
     [HttpGet]
     [Route("{id}")]
-    public async Task<IActionResult> GetAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAsync(CancellationToken cancellationToken, Guid id)
     {
         var result = await _ingridientService.GetIngridientAsync(id, cancellationToken);
 
@@ -36,7 +37,7 @@ public class IngridientsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostAsync([FromBody]IngridientCreationDTO model, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> PostAsync(CancellationToken cancellationToken, [FromBody] IngridientCreationDTO model)
     {
         var result = await _ingridientService.CreateIngridientAsync(model, cancellationToken);
         
