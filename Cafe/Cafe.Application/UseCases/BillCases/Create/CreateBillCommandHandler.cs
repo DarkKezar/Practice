@@ -67,11 +67,11 @@ public class CreateBillCommandHandler : IRequestHandler<CreateBillCommand, IOper
                 if(index == -1)
                 {
                     message.IngridientsId.Add(ingridient.First);
-                    message.Count.Add(ingridient.Second * pair.Second);
+                    message.Count.Add(-ingridient.Second * pair.Second);
                 }
                 else 
                 {
-                    message.Count[index] += ingridient.Second * pair.Second;
+                    message.Count[index] -= ingridient.Second * pair.Second;
                 }
             }
         }
