@@ -15,7 +15,8 @@ public class RoleController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetRolesAsync(int page = 1, int count = 10, CancellationToken cancellationToken = default)
+    [Route("[page]")]
+    public async Task<IActionResult> GetRolesAsync(CancellationToken cancellationToken, int page = 1, [FromBody] int count = 10)
     {
         var result = await _appRoleService.GetRolesAsync(page, count, cancellationToken);
 
@@ -24,7 +25,7 @@ public class RoleController : Controller
 
     [HttpGet]
     [Route("{name}")]
-    public async Task<IActionResult> GetRoleAsync(string name, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetRoleAsync(CancellationToken cancellationToken, string name)
     {
         var result = await _appRoleService.GetRoleAsync(name, cancellationToken);
 
@@ -32,7 +33,7 @@ public class RoleController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateRoleAsync(string name, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> CreateRoleAsync(CancellationToken cancellationToken, string name)
     {
         var result = await _appRoleService.CreateRoleAsync(name, cancellationToken);
 
@@ -40,7 +41,7 @@ public class RoleController : Controller
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteRoleAsync(string name, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> DeleteRoleAsync(CancellationToken cancellationToken, string name)
     {
         var result = await _appRoleService.DeleteRoleAsync(name, cancellationToken);
         

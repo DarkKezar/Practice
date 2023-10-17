@@ -19,7 +19,7 @@ public class UserController : Controller
 
     [HttpGet]
     [Route("{email}")]
-    public async Task<IActionResult> GetUserAsync(string email, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetUserAsync(CancellationToken cancellationToken, string email)
     {
         var result = await _appUserService.GetAppUserAsync(email, cancellationToken);
 
@@ -27,7 +27,8 @@ public class UserController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetUsersAsync(int page = 1, int count = 10, CancellationToken cancellationToken = default)
+    [Route("[page]")]
+    public async Task<IActionResult> GetUsersAsync(CancellationToken cancellationToken, int page = 1, [FromBody] int count = 10)
     {
         var result = await _appUserService.GetAllAppUserAsync(page, count, cancellationToken);
 
@@ -35,7 +36,7 @@ public class UserController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUserAsync([FromBody] SignUpModel model, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> CreateUserAsync(CancellationToken cancellationToken, [FromBody] SignUpModel model)
     {
         var result = await _appUserService.CreateAppUserAsync(model, cancellationToken);
 
@@ -45,7 +46,7 @@ public class UserController : Controller
     [HttpPatch]
     [Authorize]
     [Route("password")]
-    public async Task<IActionResult> ResetPasswordAsync([FromBody] PasswordUpdateModel model, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> ResetPasswordAsync(CancellationToken cancellationToken, [FromBody] PasswordUpdateModel model)
     {
         var result = await _appUserService.UpdateAppUserPasswrodAsync(this.GetCurrentUserId(), model, cancellationToken);
 
@@ -55,7 +56,7 @@ public class UserController : Controller
     [HttpPatch]
     [Authorize]
     [Route("user-data")]
-    public async Task<IActionResult> PatchUserDataAsync([FromBody] AppUserUpdateModel model, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> PatchUserDataAsync(CancellationToken cancellationToken, [FromBody] AppUserUpdateModel model)
     {
         var result = await _appUserService.UpdateAppUserAsync(this.GetCurrentUserId(), model, cancellationToken);
         

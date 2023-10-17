@@ -16,7 +16,7 @@ public class AuthController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> AuthAsync([FromBody]AuthModel model, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> AuthAsync(CancellationToken cancellationToken, [FromBody] AuthModel model)
     {
         var result = await _authService.AuthAccountAsync(model, cancellationToken);
         

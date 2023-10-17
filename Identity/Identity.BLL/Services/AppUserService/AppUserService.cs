@@ -66,7 +66,6 @@ public class AppUserService : IAppUserService
 
     public async Task<IOperationResult> UpdateAppUserAsync(Guid userId, AppUserUpdateModel model, CancellationToken cancellationToken = default)
     {
-        throw new Exception();
         var user = await _userManager.FindByIdAsync(userId.ToString());
         if(user == null)
         {
