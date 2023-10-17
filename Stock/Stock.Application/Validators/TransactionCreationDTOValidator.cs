@@ -7,7 +7,7 @@ public class TransactionCreationDTOValidator : AbstractValidator<TransactionCrea
 {
     public TransactionCreationDTOValidator()
     {
-        RuleFor(m => m.UserId).NotEmpty().WithMessage("Enter userId");
+        //RuleFor(m => m.UserId).NotEmpty().WithMessage("Enter userId");
         RuleFor(m => m.IngridientsId).NotNull();
         RuleFor(m => m.Count).NotNull();
         RuleFor(m => m.IngridientsId).Must((rootObject, list, context) => rootObject.Count.Count == list.Count);

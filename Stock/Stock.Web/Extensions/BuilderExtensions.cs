@@ -9,6 +9,7 @@ using Stock.Domain.Entities;
 using Stock.Application.Automappers;
 using Stock.Application.Validators;
 using Stock.Application.DTO;
+using Stock.Web.BackgroundServices;
 using FluentValidation;
 
 namespace Stock.Web.Extensions;
@@ -22,6 +23,13 @@ public static class BuilderExtensions
         builder.Services.AddSingleton<AppDbContext>();
     }
 
+    public static void MessageBrokerRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.Configure<RabbitMQSettings>(
+            builder.Configuration.GetSection("RabbitMQ"));
+        builder.Services.AddHostedService<RabbitMqListener>();
+    }
+    
     public static void RepositoriesRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.AddTransient<IIngridientRepository, IngridientRepository>();
@@ -30,8 +38,9 @@ public static class BuilderExtensions
 
     public static void ServicesRegistration(this WebApplicationBuilder builder)
     {
-        builder.Services.AddTransient<IIngridientService, IngridientService>();
-        builder.Services.AddTransient<ITransactionService, TransactionService>();
+        builder.Services.AddScoped<IIngridientService, IngridientService>();
+        //don't work with AddScoped
+        builder.Services.AddTransient<ITransactionService, TransactionService>(); 
     }
 
     public static void AutomappersRegistration(this WebApplicationBuilder builder)
@@ -43,7 +52,8 @@ public static class BuilderExtensions
     public static void ValidatorsRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IValidator<IngridientCreationDTO>, IngridientCreationDTOValidator>();
-        builder.Services.AddScoped<IValidator<TransactionCreationDTO>, TransactionCreationDTOValidator>();
+        //don't work with AddScoped
+        builder.Services.AddTransient<IValidator<TransactionCreationDTO>, TransactionCreationDTOValidator>(); 
     }
 
     public static void SwaggerSetUp(this WebApplicationBuilder builder)

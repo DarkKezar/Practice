@@ -8,6 +8,7 @@ builder.RepositoriesRegistration();
 builder.ServicesRegistration();
 builder.AutomappersRegistration();
 builder.ValidatorsRegistration();
+builder.MessageBrokerRegistration();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
