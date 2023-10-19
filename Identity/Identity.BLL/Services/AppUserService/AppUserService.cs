@@ -5,6 +5,8 @@ using Identity.DAL.Repositories.AppUserRepository;
 using Identity.BLL.OperationResult;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Grpc.Net.Client;
+using Identity.DLL.Proto;
 
 namespace Identity.BLL.Services.AppUserService;
 
@@ -13,18 +15,24 @@ public class AppUserService : IAppUserService
     private readonly IAppUserRepository _appUserRepository;
     private readonly UserManager<AppUser> _userManager;
     private readonly IMapper _mapper;
+    private readonly GrpcChannel _channel;
 
-    public AppUserService(IAppUserRepository appUserRepository, IMapper mapper, UserManager<AppUser> userManager)
+    public AppUserService(IAppUserRepository appUserRepository, IMapper mapper, UserManager<AppUser> userManager, GrpcChannel channel)
     {
         _appUserRepository = appUserRepository;
         _userManager = userManager;
         _mapper = mapper;
+        _channel = channel;
     }
     
     public async Task<IOperationResult> CreateAppUserAsync(SignUpModel model, CancellationToken cancellationToken = default)
     {
         var user = _mapper.Map<AppUser>(model);
         await  _userManager.CreateAsync(user, model.Password);
+
+        var client = new AccountCreation.AccountCreationClient(_channel);
+        var reply = await client.CreateAccountAsync(new AccountRequest() { IdentityIdString = user.Id.ToString(), Biography = model.Biography, Salary = model.Salary});
+
         var result = _mapper.Map<GetAppUserDTO>(user);
 
         return new OperationResult<GetAppUserDTO>(Messages.Created, HttpStatusCode.Created, result);

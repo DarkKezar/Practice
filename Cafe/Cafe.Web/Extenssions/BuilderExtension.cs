@@ -18,6 +18,7 @@ using Microsoft.OpenApi.Models;
 using FluentValidation;
 using MediatR;
 using MongoDB.Driver;
+using Cafe.Application.Proto;
 
 namespace Cafe.Web.Extenssions;
 

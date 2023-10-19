@@ -13,12 +13,19 @@ using Identity.DAL.Models;
 using Identity.DAL.Context;
 using Identity.BLL.DTO;
 using Microsoft.EntityFrameworkCore;
-using Identity.BLL.Services.TokenService;
+using Grpc.Net.Client;
 
 namespace Identity.Web.Extensions;
 
 public static class BuilderExtension
 {
+    public static void AnotherServiceRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddSingleton<GrpcChannel>(c => {            
+            return GrpcChannel.ForAddress(builder.Configuration.GetSection("gRPC")["Address"]);
+        });
+    }
+
     public static void DatabaseRegistration(this WebApplicationBuilder builder)
     {
         builder.Services
