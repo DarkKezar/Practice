@@ -25,7 +25,7 @@ public class AppUserRepository : IAppUserRepository
 
     public async Task<AppUser> GetAppUserAsync(string email, CancellationToken cancellationToken) 
     { 
-        return _context.Users.AsNoTracking().SingleOrDefault(u => u.NormalizedEmail == email);    
+        return _context.Users.AsNoTracking().SingleOrDefault(u => u.Email == email);    
     }
 
     public async Task<IList<AppUser>> GetAllAppUserAsync(int page, int count, CancellationToken cancellationToken) 

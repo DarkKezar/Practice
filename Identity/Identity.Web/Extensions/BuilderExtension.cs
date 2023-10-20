@@ -57,7 +57,7 @@ public static class BuilderExtension
     {
         builder.Services.Configure<JWTConfig>(
             builder.Configuration.GetSection("Jwt"));
-        builder.Services.AddSingleton<JWTConfig>();
+        //builder.Services.AddSingleton<JWTConfig>();
     }
 
     public static void AddSwaggerBearer(this WebApplicationBuilder builder)
