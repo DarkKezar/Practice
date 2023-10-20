@@ -27,8 +27,7 @@ public class TransactionsController : Controller
     }
 
     [HttpGet]
-    [Route("{page}")]
-    public async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken, int page = 0, [FromBody] int count = 10)
+    public async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken, [FromQuery]int page = 0, [FromQuery]int count = 10)
     {
         var result = await _transactionService.GetAllTransactionsAsync(page, count, cancellationToken);
 
@@ -36,7 +35,7 @@ public class TransactionsController : Controller
     }
 
     [HttpGet]
-    [Route("{id}")]
+    [Route("transaction/{id}")]
     public async Task<IActionResult> GetAsync(CancellationToken cancellationToken, Guid id)
     {
         var result = await _transactionService.GetTransactionAsync(id, cancellationToken);

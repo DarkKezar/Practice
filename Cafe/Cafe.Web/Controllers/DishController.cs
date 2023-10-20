@@ -26,8 +26,7 @@ public class DishController : ControllerBase
     }
 
     [HttpGet]
-    [Route("{page}")]
-    public async Task<IActionResult> GetAllAsync(CancellationToken token, int page = 1, [FromBody] int count = 10)
+    public async Task<IActionResult> GetAllAsync(CancellationToken token, [FromQuery]int page = 1, [FromQuery]int count = 10)
     {
         var result = await _mediator.Send(new GetAllDishQuery(page, count), token);
 
