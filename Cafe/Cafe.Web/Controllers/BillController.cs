@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Cafe.Application.UseCases.BillCases.Create;
 using Cafe.Application.UseCases.BillCases.Get;
-using Cafe.Domain.Entities;
 
 namespace Cafe.Web.Controllers;
 

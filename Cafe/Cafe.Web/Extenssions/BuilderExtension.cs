@@ -10,19 +10,32 @@ using Cafe.Application.UseCases.DishCases.Update;
 using Cafe.Application.UseCases.EmployeeCases.Create;
 using Cafe.Application.UseCases.EmployeeCases.Get;
 using Cafe.Application.UseCases.EmployeeCases.Update;
-using Cafe.Application.OperationResult;
 using Cafe.Application.Validators;
 using Cafe.Application.AutoMappers;
-using System.Text;
 using Microsoft.OpenApi.Models;
 using FluentValidation;
 using MediatR;
 using MongoDB.Driver;
+using Hangfire;
+using Hangfire.PostgreSql;
+using Cafe.Application.Services;
 
 namespace Cafe.Web.Extenssions;
 
 public static class BuilderExtension
 {
+    public static void HangfireRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddHangfire(config => {
+            config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UsePostgreSqlStorage(builder.Configuration.GetSection("Hangfire")["DefaultConnection"]);
+        });
+
+        builder.Services.AddHangfireServer();   
+    }
+
     public static void DatabaseRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.Configure<CafeDatabaseSettings>(
@@ -42,6 +55,7 @@ public static class BuilderExtension
 
     public static void CommandAndQueryRegistration(this WebApplicationBuilder builder)
     {
+        builder.Services.AddScoped<IReportService, RepostService>();
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBillCommandHandler).Assembly));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBillQueryHandler).Assembly));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllBillQueryHandler).Assembly));
