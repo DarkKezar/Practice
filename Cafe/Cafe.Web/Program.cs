@@ -4,20 +4,12 @@ using Cafe.Web.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.DatabaseRegistration();
 builder.RepositoriesRegistration();
 builder.AutomappersRegistration();
 builder.ValidatorsRegistration();
 builder.CommandAndQueryRegistration();
-
-builder.Services.AddSignalR()
-    .AddHubOptions<BillHub>(options =>
-    {
-        options.EnableDetailedErrors = true;
-        options.KeepAliveInterval = TimeSpan.FromMinutes(1);
-        options.ClientTimeoutInterval = TimeSpan.FromMinutes(8 * 60);
-    });;
+builder.SignalRRegistration();
 
 builder.Services.AddControllers();
 
@@ -38,7 +30,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapHub<BillHub>("/bills");
-
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

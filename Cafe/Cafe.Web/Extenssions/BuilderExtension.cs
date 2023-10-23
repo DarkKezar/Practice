@@ -23,6 +23,17 @@ namespace Cafe.Web.Extenssions;
 
 public static class BuilderExtension
 {
+    public static void SignalRRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddSignalR()
+        .AddHubOptions<BillHub>(options =>
+        {
+            options.EnableDetailedErrors = true;
+            options.KeepAliveInterval = TimeSpan.FromMinutes(1);
+            options.ClientTimeoutInterval = TimeSpan.FromMinutes(8 * 60);
+        });
+    }
+
     public static void DatabaseRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.Configure<CafeDatabaseSettings>(
