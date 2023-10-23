@@ -16,7 +16,7 @@ class Connector {
             .build();
         this.connection.start().catch(err => document.write(err));
         this.events = (onMessageReceived) => {
-            this.connection.on("messageReceived", (username, message) => {
+            this.connection.on("Bills", (username, message) => {
                 onMessageReceived(username, message);
             });
         };
