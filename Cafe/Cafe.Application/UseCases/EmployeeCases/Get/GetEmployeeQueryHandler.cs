@@ -19,7 +19,7 @@ public class GetEmployeeQueryHandler : IRequestHandler<GetEmployeeQuery, IOperat
 
     public async Task<IOperationResult> Handle(GetEmployeeQuery request, CancellationToken cancellationToken)
     {
-        var employee = await _employeeRepository.GetByIdAsync((Guid)request.Id);
+        var employee = await _employeeRepository.GetByIdAsync((Guid)request.Id, cancellationToken);
         if(employee == null)
         {
             throw new OperationWebException(Messages.NotFound, (HttpStatusCode)404);

@@ -23,7 +23,7 @@ public class GetAllDishQueryHandler : IRequestHandler<GetAllDishQuery, IOperatio
         {
             throw new OperationWebException(Messages.BadRequest, (HttpStatusCode)400);
         }
-        var dish = await _dishRepository.GetAllAsync(request.Page, request.Count);
+        var dish = await _dishRepository.GetAllAsync(request.Page, request.Count, cancellationToken);
         var result = _mapper.Map<List<GetDishQueryResponse>>(dish);
         
         return new OperationResult<List<GetDishQueryResponse>>(Messages.Success, HttpStatusCode.OK, result);

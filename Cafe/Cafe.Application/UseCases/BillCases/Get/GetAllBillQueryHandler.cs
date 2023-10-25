@@ -23,7 +23,7 @@ public class GetAllBillQueryHandler : IRequestHandler<GetAllBillQuery, IOperatio
         {
             throw new OperationWebException(Messages.BadRequest, (HttpStatusCode)400);
         }
-        var bill = await _billRepository.GetAllAsync(request.Page, request.Count);
+        var bill = await _billRepository.GetAllAsync(request.Page, request.Count, cancellationToken);
         var result = _mapper.Map<List<GetBillQueryResponse>>(bill);
         
         return new OperationResult<List<GetBillQueryResponse>>(Messages.Success, HttpStatusCode.OK, result);

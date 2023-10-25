@@ -3,11 +3,9 @@ using Cafe.Application.OperationResult;
 using Cafe.Application.DTO;
 using Cafe.Application.Interfaces;
 using Cafe.Application.UseCases.DishCases.Get;
-using Cafe.Domain.Entities;
 using AutoMapper;
 using System.Net;
 using MediatR;
-using FluentValidation;
 
 namespace Cafe.Application.UseCases.BillCases.Create;
 
@@ -15,34 +13,25 @@ public class CreateBillCommandHandler : IRequestHandler<CreateBillCommand, IOper
 {
     private readonly IMapper _mapper;
     private readonly IBillRepository _billRepository;
-    private readonly IValidator<CreateBillCommand> _validator;
+    private readonly IDishRepository _dishRepository;
     private readonly IMessageBrokerService _messageBroker;
-    private readonly IMediator _mediator;
 
     public CreateBillCommandHandler(IMapper mapper, 
-                                    IBillRepository repository, 
-                                    IValidator<CreateBillCommand> validator, 
+                                    IBillRepository repository,  
                                     IMessageBrokerService messageBroker,
-                                    IMediator mediator)
+                                    IDishRepository dishRepository)
     {
         _mapper = mapper;
         _billRepository = repository;
-        _validator = validator;
         _messageBroker = messageBroker;
-        _mediator = mediator;
+        _dishRepository = dishRepository;
     }
 
     public async Task<IOperationResult> Handle(CreateBillCommand request, CancellationToken cancellationToken)
     {
-        var validationResult = await _validator.ValidateAsync(request);
-        if(!validationResult.IsValid)
-        {
-            throw new OperationWebException(validationResult.ToString("|"), (HttpStatusCode)400);
-        }
-
         var bill = _mapper.Map<CreateBillCommand, Bill>(request);
         bill.DateTime = DateTime.Now;
-        bill = await _billRepository.CreateAsync(bill);
+        bill = await _billRepository.CreateAsync(bill, cancellationToken);
         await SendMessage(bill, cancellationToken);
 
         return new OperationResult<Bill>(Messages.Created, HttpStatusCode.Created, bill);
@@ -59,7 +48,7 @@ public class CreateBillCommandHandler : IRequestHandler<CreateBillCommand, IOper
 
         foreach (var pair in bill.Dishes)
         {
-            var dish = ((OperationResult<GetDishQueryResponse>)(await _mediator.Send(new GetDishQuery(pair.First)))).ObjectResult;
+            var dish = await _dishRepository.GetByIdAsync(pair.First, cancellationToken);
 
             foreach (var ingridient in dish.Ingridients)
             {

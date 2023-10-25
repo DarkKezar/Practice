@@ -39,7 +39,6 @@ public static class BuilderExtensions
     public static void ServicesRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IIngridientService, IngridientService>();
-        //don't work with AddScoped
         builder.Services.AddTransient<ITransactionService, TransactionService>(); 
     }
 

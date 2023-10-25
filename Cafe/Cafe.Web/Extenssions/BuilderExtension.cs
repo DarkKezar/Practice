@@ -11,10 +11,8 @@ using Cafe.Application.UseCases.DishCases.Update;
 using Cafe.Application.UseCases.EmployeeCases.Create;
 using Cafe.Application.UseCases.EmployeeCases.Get;
 using Cafe.Application.UseCases.EmployeeCases.Update;
-using Cafe.Application.OperationResult;
 using Cafe.Application.Validators;
 using Cafe.Application.AutoMappers;
-using System.Text;
 using Microsoft.OpenApi.Models;
 using FluentValidation;
 using MediatR;
@@ -47,6 +45,7 @@ public static class BuilderExtension
 
     public static void CommandAndQueryRegistration(this WebApplicationBuilder builder)
     {
+        builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBillCommandHandler).Assembly));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBillQueryHandler).Assembly));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllBillQueryHandler).Assembly));

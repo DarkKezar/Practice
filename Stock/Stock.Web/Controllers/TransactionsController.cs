@@ -35,7 +35,7 @@ public class TransactionsController : Controller
     }
 
     [HttpGet]
-    [Route("transaction/{id}")]
+    [Route("{id}")]
     public async Task<IActionResult> GetAsync(CancellationToken cancellationToken, Guid id)
     {
         var result = await _transactionService.GetTransactionAsync(id, cancellationToken);
@@ -48,6 +48,7 @@ public class TransactionsController : Controller
     public async Task<IActionResult> GetByUserAsync(CancellationToken cancellationToken, Guid userId)
     {
         var result = await _transactionService.GetUserTransactionsAsync(userId, cancellationToken);
+
         return result.Convert();
     }
 }

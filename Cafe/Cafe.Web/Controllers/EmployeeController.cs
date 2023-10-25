@@ -17,7 +17,7 @@ public class EmployeeController : ControllerBase
 
     [HttpGet]
     [Route("{id}")]
-    public async Task<IActionResult> GetAsync(CancellationToken token, Guid id)
+    public async Task<IActionResult> GetEmployeeAsync(CancellationToken token, Guid id)
     {
         var result = await _mediator.Send(new GetEmployeeQuery(id), token);
 
@@ -25,7 +25,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync(CancellationToken token, [FromQuery]int page = 1, [FromQuery]int count = 10)
+    public async Task<IActionResult> GetAllEmployeesAsync(CancellationToken token, [FromQuery]int page = 1, [FromQuery]int count = 10)
     {
         var result = await _mediator.Send(new GetAllEmployeeQuery(page, count), token);
 
@@ -33,7 +33,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAsync(CancellationToken token, [FromBody]CreateEmployeeCommand command)
+    public async Task<IActionResult> CreateEmployeeAsync(CancellationToken token, [FromBody]CreateEmployeeCommand command)
     {
         var result = await _mediator.Send(command, token);
 

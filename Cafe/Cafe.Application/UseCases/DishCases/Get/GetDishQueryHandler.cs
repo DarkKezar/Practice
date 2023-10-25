@@ -19,7 +19,7 @@ public class GetDishQueryHandler : IRequestHandler<GetDishQuery, IOperationResul
 
     public async Task<IOperationResult> Handle(GetDishQuery request, CancellationToken cancellationToken)
     {
-        var dish = await _dishRepository.GetByIdAsync((Guid)request.Id);
+        var dish = await _dishRepository.GetByIdAsync((Guid)request.Id, cancellationToken);
         if(dish == null) 
         {
             throw new OperationWebException(Messages.NotFound, (HttpStatusCode)404);
