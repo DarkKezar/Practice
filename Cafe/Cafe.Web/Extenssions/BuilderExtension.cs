@@ -13,6 +13,7 @@ using Cafe.Application.UseCases.EmployeeCases.Update;
 using Cafe.Application.OperationResult;
 using Cafe.Application.Validators;
 using Cafe.Application.AutoMappers;
+using Cafe.Web.Hubs;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using FluentValidation;

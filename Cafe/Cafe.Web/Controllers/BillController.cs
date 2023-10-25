@@ -28,7 +28,6 @@ public class BillController : ControllerBase
     public async Task<IActionResult> GetAsync(Guid id, CancellationToken token = default)
     {
         var result = await _mediator.Send(new GetBillQuery(id), token);
-        await _hubContext.Clients.All.SendAsync("Bills", "server", "mat vashy");
 
         return result.Convert();
     }
@@ -37,7 +36,6 @@ public class BillController : ControllerBase
     public async Task<IActionResult> GetAllAsync(int page = 1, int count = 10, CancellationToken token = default)
     {
         var result = await _mediator.Send(new GetAllBillQuery(page, count), token);
-        await _hubContext.Clients.All.SendAsync("Bills", "server", "mat vashy");
 
         return result.Convert();
     }
