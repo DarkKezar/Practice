@@ -10,20 +10,29 @@ using Cafe.Application.UseCases.DishCases.Update;
 using Cafe.Application.UseCases.EmployeeCases.Create;
 using Cafe.Application.UseCases.EmployeeCases.Get;
 using Cafe.Application.UseCases.EmployeeCases.Update;
-using Cafe.Application.OperationResult;
 using Cafe.Application.Validators;
 using Cafe.Application.AutoMappers;
-using System.Text;
 using Microsoft.OpenApi.Models;
 using FluentValidation;
 using MediatR;
 using MongoDB.Driver;
 using Cafe.Application.Proto;
+using Cafe.Application.Services;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace Cafe.Web.Extenssions;
 
 public static class BuilderExtension
 {
+    public static void ConfigureKestrel(this WebApplicationBuilder builder)
+    {
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.ListenAnyIP(int.Parse(builder.Configuration.GetSection("Ports")["Http1"]), o => o.Protocols = HttpProtocols.Http1);
+            options.ListenAnyIP(int.Parse(builder.Configuration.GetSection("Ports")["Http2"]), o => o.Protocols = HttpProtocols.Http2);
+        });
+    }
+
     public static void DatabaseRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.Configure<CafeDatabaseSettings>(
@@ -43,6 +52,8 @@ public static class BuilderExtension
 
     public static void CommandAndQueryRegistration(this WebApplicationBuilder builder)
     {
+        builder.Services.AddScoped<AccountCreationService>();
+
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBillCommandHandler).Assembly));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBillQueryHandler).Assembly));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllBillQueryHandler).Assembly));
@@ -66,6 +77,7 @@ public static class BuilderExtension
 
     public static void ValidatorsRegistration(this WebApplicationBuilder builder)
     {
+        builder.Services.AddScoped<IValidator<AccountRequest>, AccountRequestValidator>();
         builder.Services.AddScoped<IValidator<CreateBillCommand>, CreateBillCommandValidator>();
         builder.Services.AddScoped<IValidator<CreateDishCommand>, CreateDishCommandValidator>();
         builder.Services.AddScoped<IValidator<CreateEmployeeCommand>, CreateEmployeeCommandValidator>();

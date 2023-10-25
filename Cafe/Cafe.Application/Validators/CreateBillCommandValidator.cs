@@ -9,6 +9,7 @@ public class CreateBillCommandValidator : AbstractValidator<CreateBillCommand>
     public CreateBillCommandValidator()
     {
         RuleFor(b => b.Dishes).Must(list => list.Count > 0).WithMessage(Messages.DishesCount);
+        
         RuleFor(b => b.Sale).Must(sale => (sale >= 0) && (sale <= 0.5)).WithMessage(Messages.Sale);
     }
 }

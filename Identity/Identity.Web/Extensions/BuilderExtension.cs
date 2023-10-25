@@ -14,15 +14,22 @@ using Identity.DAL.Context;
 using Identity.BLL.DTO;
 using Microsoft.EntityFrameworkCore;
 using Grpc.Net.Client;
+using static Identity.DLL.Proto.AccountCreation;
+using Identity.DLL.Proto;
 
 namespace Identity.Web.Extensions;
 
 public static class BuilderExtension
 {
-    public static void AnotherServiceRegistration(this WebApplicationBuilder builder)
+    public static void GrpcClientRegistration(this WebApplicationBuilder builder)
     {
-        builder.Services.AddSingleton<GrpcChannel>(c => {            
-            return GrpcChannel.ForAddress(builder.Configuration.GetSection("gRPC")["Address"]);
+        //builder.Services.AddSingleton<GrpcChannel>(c => {            
+        //    return GrpcChannel.ForAddress(builder.Configuration.GetSection("gRPC")["Address"]);
+        //});
+        builder.Services.AddTransient<AccountCreationClient>(c => {
+            return new AccountCreation.AccountCreationClient(
+                GrpcChannel.ForAddress(builder.Configuration.GetSection("gRPC")["Address"])
+            );
         });
     }
 
@@ -57,7 +64,6 @@ public static class BuilderExtension
     {
         builder.Services.Configure<JWTConfig>(
             builder.Configuration.GetSection("Jwt"));
-        //builder.Services.AddSingleton<JWTConfig>();
     }
 
     public static void AddSwaggerBearer(this WebApplicationBuilder builder)

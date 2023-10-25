@@ -11,7 +11,9 @@ public class DishProfile : Profile
     public DishProfile()
     {
         CreateMap<CreateDishCommand, Dish>();
+
         CreateMap<UpdateDishCommand, Dish>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+        
         CreateMap<Dish, GetDishQueryResponse>();
     }
 }

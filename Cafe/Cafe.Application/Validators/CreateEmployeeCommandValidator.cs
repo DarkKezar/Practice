@@ -9,7 +9,9 @@ public class CreateEmployeeCommandValidator : AbstractValidator<CreateEmployeeCo
     public CreateEmployeeCommandValidator()
     {
         RuleFor(e => e.IdentityId).NotEmpty().WithMessage(Messages.NotEmptyField);
+
         RuleFor(e => e.Biography).NotEmpty().WithMessage(Messages.NotEmptyField);
+        
         RuleFor(e => e.Salary).Must(salary => salary > 0).WithMessage(Messages.Salary);
     }
 }
