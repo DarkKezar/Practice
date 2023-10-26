@@ -1,11 +1,11 @@
 using Cafe.Domain.Entities;
 using Cafe.Application.OperationResult;
-using Cafe.Application.DTO;
+using Stock.Application.DTO;
 using Cafe.Application.Interfaces;
-using Cafe.Application.UseCases.DishCases.Get;
 using AutoMapper;
 using System.Net;
 using MediatR;
+using MassTransit;
 
 namespace Cafe.Application.UseCases.BillCases.Create;
 
@@ -14,16 +14,16 @@ public class CreateBillCommandHandler : IRequestHandler<CreateBillCommand, IOper
     private readonly IMapper _mapper;
     private readonly IBillRepository _billRepository;
     private readonly IDishRepository _dishRepository;
-    private readonly IMessageBrokerService _messageBroker;
+    private readonly IPublishEndpoint _publishEndPoint;
 
     public CreateBillCommandHandler(IMapper mapper, 
                                     IBillRepository repository,  
-                                    IMessageBrokerService messageBroker,
+                                    IPublishEndpoint publishEndPoint,
                                     IDishRepository dishRepository)
     {
         _mapper = mapper;
         _billRepository = repository;
-        _messageBroker = messageBroker;
+        _publishEndPoint = publishEndPoint;
         _dishRepository = dishRepository;
     }
 
@@ -31,7 +31,7 @@ public class CreateBillCommandHandler : IRequestHandler<CreateBillCommand, IOper
     {
         var bill = _mapper.Map<CreateBillCommand, Bill>(request);
         bill.DateTime = DateTime.Now;
-        bill = await _billRepository.CreateAsync(bill, cancellationToken);
+       // bill = await _billRepository.CreateAsync(bill, cancellationToken);
         await SendMessage(bill, cancellationToken);
 
         return new OperationResult<Bill>(Messages.Created, HttpStatusCode.Created, bill);
@@ -45,7 +45,7 @@ public class CreateBillCommandHandler : IRequestHandler<CreateBillCommand, IOper
                 IngridientsId = new List<Guid>(),
                 Count = new List<double>()
             };
-
+/*
         foreach (var pair in bill.Dishes)
         {
             var dish = await _dishRepository.GetByIdAsync(pair.First, cancellationToken);
@@ -64,6 +64,7 @@ public class CreateBillCommandHandler : IRequestHandler<CreateBillCommand, IOper
                 }
             }
         }
-        _messageBroker.SendMessage(message);
+        */
+        await _publishEndPoint.Publish<TransactionCreationDTO>(message);
     }
 }

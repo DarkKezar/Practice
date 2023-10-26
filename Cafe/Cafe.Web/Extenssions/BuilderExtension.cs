@@ -1,6 +1,5 @@
 using Cafe.Infrastructure.Data.DBContext;
 using Cafe.Infrastructure.Data.Repositories;
-using Cafe.Infrastructure.MessageBroker;
 using Cafe.Application.Interfaces;
 using Cafe.Application.UseCases.BillCases.Create;
 using Cafe.Application.UseCases.BillCases.Get;
@@ -16,6 +15,7 @@ using Cafe.Application.AutoMappers;
 using Microsoft.OpenApi.Models;
 using FluentValidation;
 using MediatR;
+using MassTransit;
 
 
 namespace Cafe.Web.Extenssions;
@@ -31,9 +31,15 @@ public static class BuilderExtension
 
     public static void MessageBrokerRegistration(this WebApplicationBuilder builder)
     {
-        builder.Services.Configure<RabbitMQSettings>(
-            builder.Configuration.GetSection("RabbitMQ"));
-        builder.Services.AddScoped<IMessageBrokerService, RabbitMqService>();
+        builder.Services.AddMassTransit(mt => mt.AddMassTransit(x => {
+            x.UsingRabbitMq((cntxt, cfg) => {
+                cfg.Host(builder.Configuration.GetSection("RabbitMQ")["HostName"], builder.Configuration.GetSection("RabbitMQ")["VHost"], c => {
+                    c.Username(builder.Configuration.GetSection("RabbitMQ")["User"]);
+                    c.Password(builder.Configuration.GetSection("RabbitMQ")["Password"]);
+                    
+                });
+            });
+        }));
     }
 
     public static void RepositoriesRegistration(this WebApplicationBuilder builder)

@@ -1,10 +1,7 @@
 using Cafe.Web.Middlewares;
 using Cafe.Web.Extenssions;
-using Cafe.Application.UseCases.BillCases.Get;
-using Cafe.Infrastructure.Data.DBContext;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.DatabaseRegistration();
 builder.MessageBrokerRegistration();

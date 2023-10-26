@@ -1,3 +1,4 @@
+using MassTransit;
 using Stock.Web.Extensions;
 using Stock.Web.Middlewares;
 
