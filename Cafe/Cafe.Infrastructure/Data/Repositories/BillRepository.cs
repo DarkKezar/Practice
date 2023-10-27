@@ -13,8 +13,8 @@ public class BillRepository : BaseRepository<Bill>, IBillRepository
         _collection = context.GetBillCollection();
     }
 
-    public async Task<IList<Bill>> GetDailyBillsAsync()
+    public IList<Bill> GetDailyBills()
     {
-        return await _collection.AsQueryable().Where(b => b.DateTime.Date == DateTime.Now.Date).ToListAsync();
+        return _collection.AsQueryable().Where(b => b.DateTime.Date == DateTime.Now.Date).ToList();
     }
 }

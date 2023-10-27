@@ -7,4 +7,5 @@ public class CafeDatabaseSettings
     public string BillCollectionName { get; set; } = null!;
     public string DishCollectionName { get; set; } = null!;
     public string EmployeeCollectionName { get; set; } = null!;
+    public string ReportCollectionName { get; set; } = null!;
 }

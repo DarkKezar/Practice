@@ -4,5 +4,5 @@ namespace Cafe.Application.Interfaces;
 
 public interface IBillRepository : IRepository<Bill>
 { 
-    Task<IList<Bill>> GetDailyBillsAsync();
+    IList<Bill> GetDailyBills();
 }

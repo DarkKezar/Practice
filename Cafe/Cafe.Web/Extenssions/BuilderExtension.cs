@@ -51,11 +51,12 @@ public static class BuilderExtension
         builder.Services.AddTransient<IBillRepository, BillRepository>();
         builder.Services.AddTransient<IDishRepository, DishRepository>();
         builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+        builder.Services.AddTransient<IReportRepository, ReportRepository>();
     }
 
     public static void CommandAndQueryRegistration(this WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<IReportService, RepostService>();
+        builder.Services.AddScoped<IReportService, ReportService>();
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBillCommandHandler).Assembly));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBillQueryHandler).Assembly));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllBillQueryHandler).Assembly));
