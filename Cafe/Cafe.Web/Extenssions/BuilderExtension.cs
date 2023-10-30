@@ -12,6 +12,8 @@ using Cafe.Application.UseCases.EmployeeCases.Get;
 using Cafe.Application.UseCases.EmployeeCases.Update;
 using Cafe.Application.Validators;
 using Cafe.Application.AutoMappers;
+using Cafe.Web.Hubs;
+using System.Text;
 using Microsoft.OpenApi.Models;
 using FluentValidation;
 using MediatR;
@@ -25,6 +27,17 @@ namespace Cafe.Web.Extenssions;
 
 public static class BuilderExtension
 {
+    public static void SignalRRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddSignalR()
+        .AddHubOptions<BillHub>(options =>
+        {
+            options.EnableDetailedErrors = true;
+            options.KeepAliveInterval = TimeSpan.FromMinutes(1);
+            options.ClientTimeoutInterval = TimeSpan.FromMinutes(8 * 60);
+        }
+    }
+    
     public static void ConfigureKestrel(this WebApplicationBuilder builder)
     {
         builder.WebHost.ConfigureKestrel(options =>

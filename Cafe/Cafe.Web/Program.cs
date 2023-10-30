@@ -1,5 +1,6 @@
 using Cafe.Web.Middlewares;
 using Cafe.Web.Extenssions;
+using Cafe.Web.Hubs;
 using Cafe.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.RepositoriesRegistration();
 builder.AutomappersRegistration();
 builder.ValidatorsRegistration();
 builder.CommandAndQueryRegistration();
+builder.SignalRRegistration();
 builder.ConfigureKestrel();
 
 builder.Services.AddControllers();
@@ -22,7 +24,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.AddingCorsSettings();
 }
+
+app.MapHub<BillHub>("/bills");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
