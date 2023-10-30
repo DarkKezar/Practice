@@ -1,6 +1,6 @@
 using Cafe.Domain.Entities;
 using MongoDB.Driver;
-using MongoDB.Bson;
+using MongoDB.Driver.GridFS;
 using Microsoft.Extensions.Options;
  
 namespace Cafe.Infrastructure.Data.DBContext;
@@ -32,5 +32,10 @@ public class AppDbContext
     {
         return _mongoClient.GetDatabase(_settings.DatabaseName)
                 .GetCollection<Employee>(_settings.EmployeeCollectionName);
+    }
+
+    public IGridFSBucket GetReportCollection()
+    {
+        return new GridFSBucket(_mongoClient.GetDatabase(_settings.DatabaseName));
     }
 }

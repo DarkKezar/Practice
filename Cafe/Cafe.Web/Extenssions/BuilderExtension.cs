@@ -18,6 +18,9 @@ using Microsoft.OpenApi.Models;
 using FluentValidation;
 using MediatR;
 using MongoDB.Driver;
+using Hangfire;
+using Hangfire.PostgreSql;
+using Cafe.Application.Services;
 using Cafe.Application.Proto;
 using Cafe.Application.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -27,6 +30,18 @@ namespace Cafe.Web.Extenssions;
 
 public static class BuilderExtension
 {
+    public static void HangfireRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddHangfire(config => {
+            config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UsePostgreSqlStorage(builder.Configuration.GetSection("Hangfire")["DefaultConnection"]);
+        });
+
+        builder.Services.AddHangfireServer();  
+    }
+     
     public static void SignalRRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.AddSignalR()
@@ -72,10 +87,12 @@ public static class BuilderExtension
         builder.Services.AddTransient<IBillRepository, BillRepository>();
         builder.Services.AddTransient<IDishRepository, DishRepository>();
         builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+        builder.Services.AddTransient<IReportRepository, ReportRepository>();
     }
 
     public static void CommandAndQueryRegistration(this WebApplicationBuilder builder)
     {
+        builder.Services.AddScoped<IReportService, ReportService>();
         builder.Services.AddScoped<AccountCreationService>();
         builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBillCommandHandler).Assembly));
