@@ -18,7 +18,7 @@ public class DeleteDishCommandHandler : IRequestHandler<DeleteDishCommand, IOper
     public async Task<IOperationResult> Handle(DeleteDishCommand request, CancellationToken cancellationToken)
     {
         var dish = await _dishRepository.GetByIdAsync(request.Id);
-        await _dishRepository.DeleteAsync(dish);
+        await _dishRepository.DeleteAsync(dish, cancellationToken);
 
         return new OperationResult<object>(Messages.Success, HttpStatusCode.OK);
     }

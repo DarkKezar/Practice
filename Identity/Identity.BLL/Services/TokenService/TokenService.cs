@@ -6,6 +6,7 @@ using Identity.DAL.Models;
 using Identity.DAL.Repositories.AppUserRepository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options;
 
 namespace Identity.BLL.Services.TokenService;
 
@@ -14,9 +15,9 @@ public class TokenService : ITokenService
     private readonly UserManager<AppUser> _userManager;
     private readonly JWTConfig _config;
 
-    public TokenService(JWTConfig config, UserManager<AppUser> userManager)
+    public TokenService(IOptions<JWTConfig> config, UserManager<AppUser> userManager)
     {
-        _config = config;
+        _config = config.Value;
         _userManager = userManager;
     }
 
@@ -24,7 +25,7 @@ public class TokenService : ITokenService
     {
         List<Claim> claims = new List<Claim>() { new Claim(ClaimTypes.Sid, user.Id.ToString()) };
         claims.AddRange((await _userManager.GetRolesAsync(user)).Select(r => new Claim(ClaimTypes.Role, r)));
-
+ 
         JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(
             issuer: _config.Issuer,
             audience: _config.Audience,

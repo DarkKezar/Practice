@@ -24,7 +24,7 @@ public class GetAllEmployeeQueryHandler : IRequestHandler<GetAllEmployeeQuery, I
         {
             throw new OperationWebException(Messages.BadRequest, (HttpStatusCode)400);
         }
-        var employee = await _employeeRepository.GetAllAsync(request.Page, request.Count);
+        var employee = await _employeeRepository.GetAllAsync(request.Page, request.Count, cancellationToken);
         var result = _mapper.Map<List<GetEmployeeQueryResponse>>(employee);
         
         return new OperationResult<List<GetEmployeeQueryResponse>>(Messages.Success, HttpStatusCode.OK, result);

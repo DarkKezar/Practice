@@ -10,7 +10,6 @@ using Cafe.Application.UseCases.DishCases.Update;
 using Cafe.Application.UseCases.EmployeeCases.Create;
 using Cafe.Application.UseCases.EmployeeCases.Get;
 using Cafe.Application.UseCases.EmployeeCases.Update;
-using Cafe.Application.OperationResult;
 using Cafe.Application.Validators;
 using Cafe.Application.AutoMappers;
 using Cafe.Web.Hubs;
@@ -19,6 +18,10 @@ using Microsoft.OpenApi.Models;
 using FluentValidation;
 using MediatR;
 using MongoDB.Driver;
+using Cafe.Application.Proto;
+using Cafe.Application.Services;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using MassTransit;
 
 namespace Cafe.Web.Extenssions;
 
@@ -32,6 +35,15 @@ public static class BuilderExtension
             options.EnableDetailedErrors = true;
             options.KeepAliveInterval = TimeSpan.FromMinutes(1);
             options.ClientTimeoutInterval = TimeSpan.FromMinutes(8 * 60);
+        }
+    }
+    
+    public static void ConfigureKestrel(this WebApplicationBuilder builder)
+    {
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.ListenAnyIP(int.Parse(builder.Configuration.GetSection("Ports")["Http1"]), o => o.Protocols = HttpProtocols.Http1);
+            options.ListenAnyIP(int.Parse(builder.Configuration.GetSection("Ports")["Http2"]), o => o.Protocols = HttpProtocols.Http2);
         });
     }
 
@@ -39,10 +51,20 @@ public static class BuilderExtension
     {
         builder.Services.Configure<CafeDatabaseSettings>(
             builder.Configuration.GetSection("CafeDatabase"));
-        builder.Services.AddSingleton<IMongoClient>(s => 
-            new MongoClient(builder.Configuration.GetSection("CafeDatabase")["ConnectionString"])
-        );
         builder.Services.AddSingleton<AppDbContext>();
+    }
+
+    public static void MessageBrokerRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddMassTransit(mt => mt.AddMassTransit(x => {
+            x.UsingRabbitMq((cntxt, cfg) => {
+                cfg.Host(builder.Configuration.GetSection("RabbitMQ")["HostName"], builder.Configuration.GetSection("RabbitMQ")["VHost"], c => {
+                    c.Username(builder.Configuration.GetSection("RabbitMQ")["User"]);
+                    c.Password(builder.Configuration.GetSection("RabbitMQ")["Password"]);
+                    
+                });
+            });
+        }));
     }
 
     public static void RepositoriesRegistration(this WebApplicationBuilder builder)
@@ -54,6 +76,8 @@ public static class BuilderExtension
 
     public static void CommandAndQueryRegistration(this WebApplicationBuilder builder)
     {
+        builder.Services.AddScoped<AccountCreationService>();
+        builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBillCommandHandler).Assembly));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBillQueryHandler).Assembly));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllBillQueryHandler).Assembly));
@@ -77,6 +101,7 @@ public static class BuilderExtension
 
     public static void ValidatorsRegistration(this WebApplicationBuilder builder)
     {
+        builder.Services.AddScoped<IValidator<AccountRequest>, AccountRequestValidator>();
         builder.Services.AddScoped<IValidator<CreateBillCommand>, CreateBillCommandValidator>();
         builder.Services.AddScoped<IValidator<CreateDishCommand>, CreateDishCommandValidator>();
         builder.Services.AddScoped<IValidator<CreateEmployeeCommand>, CreateEmployeeCommandValidator>();
