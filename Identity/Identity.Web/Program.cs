@@ -3,6 +3,7 @@ using Identity.Web.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.GrpcClientRegistration();
 builder.DatabaseRegistration();
 builder.RepositoriesRegistration();
 builder.ServicesRegistration();

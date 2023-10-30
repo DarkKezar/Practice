@@ -24,13 +24,15 @@ public class AuthService : IAuthService
     public async Task<IOperationResult> AuthAccountAsync(AuthModel model, CancellationToken cancellationToken = default)
     {    
         var user = await _appUserRepository.GetAppUserAsync(model.Email, cancellationToken); 
+
         if(user == null)
         {
             return new OperationResult<Object>(Messages.InvalidEmail, HttpStatusCode.BadRequest);
         }
         if((await _userManager.CheckPasswordAsync(user, model.Password)) == true)
         {
-            return new OperationResult<string>(Messages.Success, HttpStatusCode.Accepted, await _tokenService.GenerateJWTAsync(user, cancellationToken));
+            var token = await _tokenService.GenerateJWTAsync(user, cancellationToken);
+            return new OperationResult<string>(Messages.Success, HttpStatusCode.Accepted, token);
         }
         else
         {
