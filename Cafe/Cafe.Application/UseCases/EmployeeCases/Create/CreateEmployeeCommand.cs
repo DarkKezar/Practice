@@ -1,5 +1,4 @@
 using MediatR;
-using Cafe.Domain.Entities;
 using Cafe.Application.OperationResult;
 
 namespace Cafe.Application.UseCases.EmployeeCases.Create;

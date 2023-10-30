@@ -5,6 +5,8 @@ using Identity.DAL.Repositories.AppUserRepository;
 using Identity.BLL.OperationResult;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Identity.DLL.Proto;
+using static Identity.DLL.Proto.AccountCreation;
 
 namespace Identity.BLL.Services.AppUserService;
 
@@ -13,18 +15,28 @@ public class AppUserService : IAppUserService
     private readonly IAppUserRepository _appUserRepository;
     private readonly UserManager<AppUser> _userManager;
     private readonly IMapper _mapper;
+    //private readonly GrpcChannel _channel;
+    private readonly AccountCreationClient _client;
 
-    public AppUserService(IAppUserRepository appUserRepository, IMapper mapper, UserManager<AppUser> userManager)
+    //public AppUserService(IAppUserRepository appUserRepository, IMapper mapper, UserManager<AppUser> userManager, GrpcChannel channel)
+    public AppUserService(IAppUserRepository appUserRepository, IMapper mapper, UserManager<AppUser> userManager, AccountCreationClient client)
     {
         _appUserRepository = appUserRepository;
         _userManager = userManager;
         _mapper = mapper;
+        _client = client;
     }
     
     public async Task<IOperationResult> CreateAppUserAsync(SignUpModel model, CancellationToken cancellationToken = default)
     {
         var user = _mapper.Map<AppUser>(model);
         await  _userManager.CreateAsync(user, model.Password);
+
+        var sendModel = _mapper.Map<AccountRequest>(model);
+        sendModel.IdentityIdString = user.Id.ToString();
+        //var client = new AccountCreation.AccountCreationClient(_channel);
+        var reply = await _client.CreateAccountAsync(sendModel);
+
         var result = _mapper.Map<GetAppUserDTO>(user);
 
         return new OperationResult<GetAppUserDTO>(Messages.Created, HttpStatusCode.Created, result);

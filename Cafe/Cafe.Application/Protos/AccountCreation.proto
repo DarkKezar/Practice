@@ -1,0 +1,19 @@
+syntax = "proto3";
+ 
+option csharp_namespace = "Cafe.Application.Proto";
+ 
+package account;
+ 
+service AccountCreation {
+  rpc CreateAccount (AccountRequest) returns (AccountReply);
+}
+ 
+message AccountRequest {
+  string IdentityIdString = 1;
+  string Biography = 2;
+  double Salary = 3;
+}
+ 
+message AccountReply {
+  string Status = 1;
+}

@@ -55,7 +55,7 @@ public class IngridientService : IIngridientService
         var result = await _ingridientRepository.GetByIdAsync(id, cancellationToken);
         if(result == null) 
         {
-            throw new OperationWebException(Messages.NotFound, (HttpStatusCode)400);
+            throw new OperationWebException(Messages.NotFound, (HttpStatusCode)404);
         }
 
         return new OperationResult<Ingridient>(Messages.Success, HttpStatusCode.OK, result);
