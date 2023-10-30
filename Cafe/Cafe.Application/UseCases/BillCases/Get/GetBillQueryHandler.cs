@@ -20,7 +20,7 @@ public class GetBillQueryHandler : IRequestHandler<GetBillQuery, IOperationResul
 
     public async Task<IOperationResult> Handle(GetBillQuery request, CancellationToken cancellationToken)
     {
-        var bill = await _billRepository.GetByIdAsync((Guid)request.Id);
+        var bill = await _billRepository.GetByIdAsync((Guid)request.Id, cancellationToken);
         if(bill == null)
         {
             throw new OperationWebException(Messages.NotFound, (HttpStatusCode)400);

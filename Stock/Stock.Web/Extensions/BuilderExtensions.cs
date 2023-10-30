@@ -1,16 +1,15 @@
-using System.Text;
 using Microsoft.OpenApi.Models;
 using Stock.Infrastructure.Data.DBContext;
 using Stock.Application.IServices;
 using Stock.Application.Services;
 using Stock.Application.Interfaces;
 using Stock.Infrastructure.Data.Repositories;
-using Stock.Domain.Entities;
 using Stock.Application.Automappers;
 using Stock.Application.Validators;
 using Stock.Application.DTO;
 using FluentValidation;
-using MongoDB.Driver;
+using MassTransit;
+using Stock.Web.Consumers;
 
 namespace Stock.Web.Extensions;
 
@@ -20,12 +19,26 @@ public static class BuilderExtensions
     {
         builder.Services.Configure<StockDatabaseSettings>(
             builder.Configuration.GetSection("StockDatabase"));
-        builder.Services.AddSingleton<IMongoClient>(s => 
-            new MongoClient(builder.Configuration.GetSection("StockDatabase")["ConnectionString"])
-        );
         builder.Services.AddSingleton<AppDbContext>();
     }
 
+    public static void MessageBrokerRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddMassTransit(x =>
+        {
+            x.AddConsumer<CommandMessageConsumer>();
+            x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
+            {
+                cfg.Host(builder.Configuration.GetSection("RabbitMQ")["HostName"], builder.Configuration.GetSection("RabbitMQ")["VHost"], h => { });
+
+                cfg.ReceiveEndpoint("TransactionCreationDTO", ep =>
+                {
+                    ep.ConfigureConsumer<CommandMessageConsumer>(provider); 
+                });
+            }));
+        });
+    }
+    
     public static void RepositoriesRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.AddTransient<IIngridientRepository, IngridientRepository>();
@@ -34,8 +47,8 @@ public static class BuilderExtensions
 
     public static void ServicesRegistration(this WebApplicationBuilder builder)
     {
-        builder.Services.AddTransient<IIngridientService, IngridientService>();
-        builder.Services.AddTransient<ITransactionService, TransactionService>();
+        builder.Services.AddScoped<IIngridientService, IngridientService>();
+        builder.Services.AddTransient<ITransactionService, TransactionService>(); 
     }
 
     public static void AutomappersRegistration(this WebApplicationBuilder builder)
@@ -47,7 +60,8 @@ public static class BuilderExtensions
     public static void ValidatorsRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IValidator<IngridientCreationDTO>, IngridientCreationDTOValidator>();
-        builder.Services.AddScoped<IValidator<TransactionCreationDTO>, TransactionCreationDTOValidator>();
+        //don't work with AddScoped
+        builder.Services.AddTransient<IValidator<TransactionCreationDTO>, TransactionCreationDTOValidator>(); 
     }
 
     public static void SwaggerSetUp(this WebApplicationBuilder builder)

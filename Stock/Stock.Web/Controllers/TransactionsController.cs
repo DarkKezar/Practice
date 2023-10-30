@@ -19,7 +19,7 @@ public class TransactionsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostAsync([FromBody]TransactionCreationDTO model, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> PostAsync(CancellationToken cancellationToken, [FromBody] TransactionCreationDTO model)
     {
         var result = await _transactionService.InsertTransactionAsync(model, cancellationToken);
 
@@ -27,7 +27,7 @@ public class TransactionsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync(int page = 0, int count = 10, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken, [FromQuery]int page = 0, [FromQuery]int count = 10)
     {
         var result = await _transactionService.GetAllTransactionsAsync(page, count, cancellationToken);
 
@@ -36,7 +36,7 @@ public class TransactionsController : Controller
 
     [HttpGet]
     [Route("{id}")]
-    public async Task<IActionResult> GetAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAsync(CancellationToken cancellationToken, Guid id)
     {
         var result = await _transactionService.GetTransactionAsync(id, cancellationToken);
 
@@ -45,9 +45,10 @@ public class TransactionsController : Controller
 
     [HttpGet]
     [Route("user/{userId}")]
-    public async Task<IActionResult> GetByUserAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetByUserAsync(CancellationToken cancellationToken, Guid userId)
     {
         var result = await _transactionService.GetUserTransactionsAsync(userId, cancellationToken);
+
         return result.Convert();
     }
 }
