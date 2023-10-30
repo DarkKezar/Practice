@@ -2,6 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Cafe.Application.UseCases.BillCases.Create;
 using Cafe.Application.UseCases.BillCases.Get;
+using Cafe.Domain.Entities;
+using Microsoft.AspNetCore.SignalR;
+using Cafe.Web.Hubs;
+using Cafe.Application.OperationResult;
+using System.Text.Json;
 
 namespace Cafe.Web.Controllers;
 
@@ -10,8 +15,13 @@ namespace Cafe.Web.Controllers;
 public class BillController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IHubContext<BillHub> _hubContext;
     
-    public BillController(IMediator mediator) => _mediator = mediator;
+    public BillController(IMediator mediator, IHubContext<BillHub> hubContext) 
+    {
+        _mediator = mediator;
+        _hubContext = hubContext;
+    }
 
     [HttpGet]
     [Route("{id}")]
@@ -35,6 +45,7 @@ public class BillController : ControllerBase
     public async Task<IActionResult> CreateBillAsync(CancellationToken token, [FromBody] CreateBillCommand command)
     {
         var result = await _mediator.Send(command, token);
+        await _hubContext.Clients.All.SendAsync("Bills", "server", JsonSerializer.Serialize(((OperationResult<Bill>)result).ObjectResult));
 
         return result.Convert();
     }
