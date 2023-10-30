@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace Stock.Application.DTO;
+namespace Stock.Application.Exceptions;
 
 public class OperationWebException : System.Exception
 {

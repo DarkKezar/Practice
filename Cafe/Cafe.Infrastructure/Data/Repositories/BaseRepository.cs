@@ -4,6 +4,7 @@ using Cafe.Domain.Entities;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cafe.Infrastructure.Data.Repositories;
 
@@ -13,10 +14,10 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
 
     public async Task<IList<T>> GetAllAsync(int page, int count, CancellationToken cancellationToken = default)
     {
-        return _collection.AsQueryable().Skip(page * count).Take(count).ToList();
+        return await _collection.AsQueryable().Skip(page * count).Take(count).ToListAsync();
     }
 
-    public async Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var r = await (await _collection.FindAsync(new BsonDocument("_id", id))).ToListAsync();
         

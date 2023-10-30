@@ -7,13 +7,13 @@ namespace Stock.Infrastructure.Data.DBContext;
 
 public class AppDbContext
 {
-    public readonly MongoClient _mongoClient;
+    public readonly IMongoClient _mongoClient;
     public readonly IOptions<StockDatabaseSettings> _settings;
 
-    public AppDbContext(IOptions<StockDatabaseSettings> settings)
+    public AppDbContext(IOptions<StockDatabaseSettings> settings, IMongoClient mongoClient)
     {
         _settings = settings;
-        _mongoClient = new MongoClient(_settings.Value.ConnectionString);
+        _mongoClient = mongoClient;
     }
 
     public IMongoCollection<Ingridient> GetIngridientCollection()

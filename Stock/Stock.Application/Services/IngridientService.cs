@@ -2,7 +2,8 @@ using Stock.Domain.Entities;
 using Stock.Application.IServices;
 using Stock.Application.Interfaces;
 using Stock.Application.DTO;
-using Stock.Application.DTO.OperationResult;
+using Stock.Application.OperationResult;
+using Stock.Application.Exceptions;
 using Stock.Application.Validators;
 using AutoMapper;
 using System.Net;
@@ -27,7 +28,7 @@ public class IngridientService : IIngridientService
 
     public async Task<IOperationResult> CreateIngridientAsync(IngridientCreationDTO model, CancellationToken cancellationToken = default)
     {
-        var validationResult = await _validator.ValidateAsync(model);
+        var validationResult = await _validator.ValidateAsync(model, cancellationToken);
         if(!validationResult.IsValid)
         {
             throw new OperationWebException(validationResult.ToString("|"), (HttpStatusCode)400);   

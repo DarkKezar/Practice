@@ -2,7 +2,8 @@ using Stock.Domain.Entities;
 using Stock.Application.IServices;
 using Stock.Application.Interfaces;
 using Stock.Application.DTO;
-using Stock.Application.DTO.OperationResult;
+using Stock.Application.OperationResult;
+using Stock.Application.Exceptions;
 using Stock.Application.Validators;
 using AutoMapper;
 using System.Net;
@@ -32,14 +33,14 @@ public class TransactionService : ITransactionService
 
     public async Task<IOperationResult> InsertTransactionAsync(TransactionCreationDTO model, CancellationToken cancellationToken = default)
     {
-        var validationResult = await _validator.ValidateAsync(model);
+        var validationResult = await _validator.ValidateAsync(model, cancellationToken);
         if(!validationResult.IsValid)
         {   
             throw new OperationWebException(validationResult.ToString("|"), (HttpStatusCode)400);
         }
 
         var transaction = _mapper.Map<TransactionCreationDTO, Transaction>(model);
-        var ingridients = (await _ingridientRepository.GetIQueryableAsync(cancellationToken)).Where(ing => transaction.IngridientsId.Contains(ing.Id)).ToList();
+        var ingridients = _ingridientRepository.GetIQueryable(cancellationToken).Where(ing => transaction.IngridientsId.Contains(ing.Id)).ToList();
         if(ingridients.Count != transaction.IngridientsId.Count)
         {
             throw new OperationWebException(Messages.NotFound, (HttpStatusCode)404);
@@ -58,7 +59,7 @@ public class TransactionService : ITransactionService
 
     public async Task<IOperationResult> GetUserTransactionsAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var result = (await _transactionRepository.GetIQueryableAsync(cancellationToken)).Where(t => t.UserId == userId).ToList();
+        var result = _transactionRepository.GetIQueryable(cancellationToken).Where(t => t.UserId == userId).ToList();
         
         return new OperationResult<IList<Transaction>>(Messages.Success, HttpStatusCode.OK, result);
     }

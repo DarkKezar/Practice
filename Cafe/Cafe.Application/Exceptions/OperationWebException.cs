@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace Cafe.Application.DTO;
+namespace Cafe.Application.Exceptions;
 
 public class OperationWebException : System.Exception
 {
