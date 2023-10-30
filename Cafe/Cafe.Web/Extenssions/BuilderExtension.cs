@@ -19,6 +19,7 @@ using MongoDB.Driver;
 using Cafe.Application.Proto;
 using Cafe.Application.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using MassTransit;
 
 namespace Cafe.Web.Extenssions;
 
@@ -37,10 +38,20 @@ public static class BuilderExtension
     {
         builder.Services.Configure<CafeDatabaseSettings>(
             builder.Configuration.GetSection("CafeDatabase"));
-        builder.Services.AddSingleton<IMongoClient>(s => 
-            new MongoClient(builder.Configuration.GetSection("CafeDatabase")["ConnectionString"])
-        );
         builder.Services.AddSingleton<AppDbContext>();
+    }
+
+    public static void MessageBrokerRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddMassTransit(mt => mt.AddMassTransit(x => {
+            x.UsingRabbitMq((cntxt, cfg) => {
+                cfg.Host(builder.Configuration.GetSection("RabbitMQ")["HostName"], builder.Configuration.GetSection("RabbitMQ")["VHost"], c => {
+                    c.Username(builder.Configuration.GetSection("RabbitMQ")["User"]);
+                    c.Password(builder.Configuration.GetSection("RabbitMQ")["Password"]);
+                    
+                });
+            });
+        }));
     }
 
     public static void RepositoriesRegistration(this WebApplicationBuilder builder)
@@ -53,7 +64,7 @@ public static class BuilderExtension
     public static void CommandAndQueryRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<AccountCreationService>();
-
+        builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBillCommandHandler).Assembly));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBillQueryHandler).Assembly));
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllBillQueryHandler).Assembly));
