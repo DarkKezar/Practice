@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using Cafe.Application.DTO;
+using Cafe.Application.Exceptions;
 using FluentValidation;
 using MediatR;
 

@@ -4,11 +4,8 @@ using Stock.Application.Interfaces;
 using Stock.Application.DTO;
 using Stock.Application.OperationResult;
 using Stock.Application.Exceptions;
-using Stock.Application.Validators;
 using AutoMapper;
 using System.Net;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using FluentValidation;
 
 namespace Stock.Application.Services;

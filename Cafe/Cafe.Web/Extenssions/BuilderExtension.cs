@@ -50,7 +50,7 @@ public static class BuilderExtension
             options.EnableDetailedErrors = true;
             options.KeepAliveInterval = TimeSpan.FromMinutes(1);
             options.ClientTimeoutInterval = TimeSpan.FromMinutes(8 * 60);
-        }
+        });
     }
     
     public static void ConfigureKestrel(this WebApplicationBuilder builder)
@@ -66,6 +66,9 @@ public static class BuilderExtension
     {
         builder.Services.Configure<CafeDatabaseSettings>(
             builder.Configuration.GetSection("CafeDatabase"));
+        builder.Services.AddSingleton<IMongoClient>(s => 
+            new MongoClient(builder.Configuration.GetSection("CafeDatabase")["ConnectionString"])
+        );
         builder.Services.AddSingleton<AppDbContext>();
     }
 

@@ -8,23 +8,23 @@ namespace Stock.Infrastructure.Data.DBContext;
 public class AppDbContext
 {
     public readonly IMongoClient _mongoClient;
-    public readonly IOptions<StockDatabaseSettings> _settings;
+    public readonly StockDatabaseSettings _settings;
 
     public AppDbContext(IOptions<StockDatabaseSettings> settings, IMongoClient mongoClient)
     {
-        _settings = settings;
+        _settings = settings.Value;
         _mongoClient = mongoClient;
     }
 
     public IMongoCollection<Ingridient> GetIngridientCollection()
     {
-        return _mongoClient.GetDatabase(_settings.Value.DatabaseName)
-                .GetCollection<Ingridient>(_settings.Value.IngridientsCollectionName);
+        return _mongoClient.GetDatabase(_settings.DatabaseName)
+                .GetCollection<Ingridient>(_settings.IngridientsCollectionName);
     }
 
     public IMongoCollection<Transaction> GetTransactionCollection()
     {
-        return _mongoClient.GetDatabase(_settings.Value.DatabaseName)
-                .GetCollection<Transaction>(_settings.Value.TransactionsCollectionName);
+        return _mongoClient.GetDatabase(_settings.DatabaseName)
+                .GetCollection<Transaction>(_settings.TransactionsCollectionName);
     }
 }

@@ -22,7 +22,6 @@ public class AccountCreationService : AccountCreation.AccountCreationBase
 
     public async override Task<AccountReply> CreateAccount(AccountRequest request, ServerCallContext context)
     {
-        /*
         var validationResult = await _validator.ValidateAsync(request);
         if(!validationResult.IsValid)
         {
@@ -30,7 +29,7 @@ public class AccountCreationService : AccountCreation.AccountCreationBase
         }
         var employee = _mapper.Map<Employee>(request);
         employee.IdentityId = Guid.Parse(request.IdentityIdString);
-        employee = await _employeeRepository.CreateAsync(employee);*/
+        employee = await _employeeRepository.CreateAsync(employee);
 
         return new AccountReply() { Status = "Succsess" };
     }

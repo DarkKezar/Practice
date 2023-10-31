@@ -10,6 +10,7 @@ using Stock.Application.DTO;
 using FluentValidation;
 using MassTransit;
 using Stock.Web.Consumers;
+using MongoDB.Driver;
 
 namespace Stock.Web.Extensions;
 
@@ -19,9 +20,13 @@ public static class BuilderExtensions
     {
         builder.Services.Configure<StockDatabaseSettings>(
             builder.Configuration.GetSection("StockDatabase"));
+        builder.Services.AddSingleton<IMongoClient>(s => 
+             new MongoClient(builder.Configuration.GetSection("StockDatabase")["ConnectionString"])
+         );
         builder.Services.AddSingleton<AppDbContext>();
     }
 
+    [Obsolete]
     public static void MessageBrokerRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.AddMassTransit(x =>
@@ -60,7 +65,6 @@ public static class BuilderExtensions
     public static void ValidatorsRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IValidator<IngridientCreationDTO>, IngridientCreationDTOValidator>();
-        //don't work with AddScoped
         builder.Services.AddTransient<IValidator<TransactionCreationDTO>, TransactionCreationDTOValidator>(); 
     }
 

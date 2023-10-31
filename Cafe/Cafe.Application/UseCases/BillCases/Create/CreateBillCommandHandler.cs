@@ -31,7 +31,7 @@ public class CreateBillCommandHandler : IRequestHandler<CreateBillCommand, IOper
     {
         var bill = _mapper.Map<CreateBillCommand, Bill>(request);
         bill.DateTime = DateTime.Now;
-       // bill = await _billRepository.CreateAsync(bill, cancellationToken);
+        bill = await _billRepository.CreateAsync(bill, cancellationToken);
         await SendMessage(bill, cancellationToken);
 
         return new OperationResult<Bill>(Messages.Created, HttpStatusCode.Created, bill);
@@ -45,7 +45,7 @@ public class CreateBillCommandHandler : IRequestHandler<CreateBillCommand, IOper
                 IngridientsId = new List<Guid>(),
                 Count = new List<double>()
             };
-/*
+
         foreach (var pair in bill.Dishes)
         {
             var dish = await _dishRepository.GetByIdAsync(pair.First, cancellationToken);
@@ -64,7 +64,7 @@ public class CreateBillCommandHandler : IRequestHandler<CreateBillCommand, IOper
                 }
             }
         }
-        */
+        
         await _publishEndPoint.Publish<TransactionCreationDTO>(message);
     }
 }

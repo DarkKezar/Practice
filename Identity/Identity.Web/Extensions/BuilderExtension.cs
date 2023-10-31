@@ -23,9 +23,6 @@ public static class BuilderExtension
 {
     public static void GrpcClientRegistration(this WebApplicationBuilder builder)
     {
-        //builder.Services.AddSingleton<GrpcChannel>(c => {            
-        //    return GrpcChannel.ForAddress(builder.Configuration.GetSection("gRPC")["Address"]);
-        //});
         builder.Services.AddTransient<AccountCreationClient>(c => {
             return new AccountCreation.AccountCreationClient(
                 GrpcChannel.ForAddress(builder.Configuration.GetSection("gRPC")["Address"])
