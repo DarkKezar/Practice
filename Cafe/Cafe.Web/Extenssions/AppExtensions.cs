@@ -9,4 +9,13 @@ public static class AppExtensions
     {
         RecurringJob.AddOrUpdate("ReportService", (IReportService service) => service.GenerateDailyRepostAsync(), "0 18 * * 1-5");
     }
+
+    public static void AddingCorsSettings(this WebApplication app)
+    {
+        app.UseCors(x => x
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .SetIsOriginAllowed(origin => true)
+            .AllowCredentials()); 
+    }
 }

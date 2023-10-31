@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.SignalR;
 using Cafe.Web.Hubs;
 using Cafe.Application.OperationResult;
 using System.Text.Json;
+using Microsoft.Extensions.Caching.Distributed;
+using Cafe.Web.Extenssions;
 
 namespace Cafe.Web.Controllers;
 
@@ -16,25 +18,28 @@ public class BillController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly IHubContext<BillHub> _hubContext;
+    private readonly IDistributedCache _cache;
     
-    public BillController(IMediator mediator, IHubContext<BillHub> hubContext) 
+    public BillController(IMediator mediator, IHubContext<BillHub> hubContext, IDistributedCache cache) 
     {
         _mediator = mediator;
         _hubContext = hubContext;
+        _cache = cache;
     }
 
     [HttpGet]
     [Route("{id}")]
     public async Task<IActionResult> GetBillAsync(CancellationToken token, Guid id)
     {
-        var result = await _mediator.Send(new GetBillQuery(id), token);
+        var cacheString = $"bills/{id}";
+        var result = await this.GetCachedAsync<OperationResult<GetBillQueryResponse>>(
+                                cacheString, _mediator, new GetBillQuery(id), _cache, token);
 
         return result.Convert();
     }
 
     [HttpGet]
-    [Route("{page}")]
-    public async Task<IActionResult> GetAllBillsAsync(CancellationToken token, int page = 1, [FromBody] int count = 10)
+    public async Task<IActionResult> GetAllBillsAsync(CancellationToken token,  [FromQuery] int page = 1, [FromQuery] int count = 10)
     {
         var result = await _mediator.Send(new GetAllBillQuery(page, count), token);
 

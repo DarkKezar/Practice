@@ -4,6 +4,9 @@ using Stock.Application.DTO;
 using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
+using System.Transactions;
 
 namespace Stock.Web.Controllers;
 
@@ -12,10 +15,12 @@ namespace Stock.Web.Controllers;
 public class TransactionsController : Controller
 {
     private readonly ITransactionService _transactionService;
+    private readonly IDistributedCache _cache;
 
-    public TransactionsController(ITransactionService transactionService)
+    public TransactionsController(ITransactionService transactionService, IDistributedCache cache)
     {
         _transactionService = transactionService;
+        _cache = cache;
     }
 
     [HttpPost]
@@ -38,7 +43,24 @@ public class TransactionsController : Controller
     [Route("{id}")]
     public async Task<IActionResult> GetAsync(CancellationToken cancellationToken, Guid id)
     {
-        var result = await _transactionService.GetTransactionAsync(id, cancellationToken);
+        var cacheString = $"transactions/{id}";
+        var cacheResult = await _cache.GetStringAsync(cacheString, cancellationToken);
+        IOperationResult result;
+        if(cacheResult == null)
+        {
+            result = await _transactionService.GetTransactionAsync(id, cancellationToken);
+            await _cache.SetStringAsync( cacheString, 
+                                        JsonConvert.SerializeObject(result, Formatting.Indented), 
+                                        new DistributedCacheEntryOptions 
+                                        { 
+                                            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1) 
+                                        }, 
+                                        cancellationToken);
+        }
+        else
+        {
+            result = JsonConvert.DeserializeObject<OperationResult<Transaction>>(cacheResult);
+        }
 
         return result.Convert();
     }
