@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stock.Infrastructure", "Sto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stock.Web", "Stock.Web\Stock.Web.csproj", "{7C5682D5-9A0F-4C4D-9EBB-AD112AD02216}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stock.xTests", "Stock.xTests\Stock.xTests.csproj", "{40B96AF6-FE73-4D1A-BF5C-DB22B2ACAF63}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{7C5682D5-9A0F-4C4D-9EBB-AD112AD02216}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C5682D5-9A0F-4C4D-9EBB-AD112AD02216}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C5682D5-9A0F-4C4D-9EBB-AD112AD02216}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40B96AF6-FE73-4D1A-BF5C-DB22B2ACAF63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40B96AF6-FE73-4D1A-BF5C-DB22B2ACAF63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40B96AF6-FE73-4D1A-BF5C-DB22B2ACAF63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40B96AF6-FE73-4D1A-BF5C-DB22B2ACAF63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

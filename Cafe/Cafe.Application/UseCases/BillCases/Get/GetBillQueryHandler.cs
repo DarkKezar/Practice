@@ -23,7 +23,7 @@ public class GetBillQueryHandler : IRequestHandler<GetBillQuery, IOperationResul
         var bill = await _billRepository.GetByIdAsync((Guid)request.Id, cancellationToken);
         if(bill == null)
         {
-            throw new OperationWebException(Messages.NotFound, (HttpStatusCode)400);
+            throw new OperationWebException(Messages.NotFound, (HttpStatusCode)404);
         } 
         var result = _mapper.Map<Bill, GetBillQueryResponse>(bill);
         

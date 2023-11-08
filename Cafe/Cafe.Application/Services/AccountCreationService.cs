@@ -12,6 +12,8 @@ public class AccountCreationService : AccountCreation.AccountCreationBase
     private readonly IMapper _mapper;
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IValidator<AccountRequest> _validator;
+    private readonly string successMessage = "Succsess";
+    private readonly string failMessage = "Fail";
 
     public AccountCreationService(IMapper mapper, IEmployeeRepository repository, IValidator<AccountRequest> validator)
     {
@@ -20,17 +22,17 @@ public class AccountCreationService : AccountCreation.AccountCreationBase
         _validator = validator;
     }
 
-    public async override Task<AccountReply> CreateAccount(AccountRequest request, ServerCallContext context)
+    public async override Task<AccountReply> CreateAccount(AccountRequest request, ServerCallContext context = default)
     {
         var validationResult = await _validator.ValidateAsync(request);
         if(!validationResult.IsValid)
         {
-            return new AccountReply() { Status = "Fail" };
+            return new AccountReply() { Status = failMessage };
         }
         var employee = _mapper.Map<Employee>(request);
         employee.IdentityId = Guid.Parse(request.IdentityIdString);
         employee = await _employeeRepository.CreateAsync(employee);
 
-        return new AccountReply() { Status = "Succsess" };
+        return new AccountReply() { Status = successMessage };
     }
 }

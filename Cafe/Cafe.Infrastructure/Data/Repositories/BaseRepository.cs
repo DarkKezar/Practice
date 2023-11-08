@@ -1,9 +1,7 @@
-using Cafe.Application.DTO;
 using Cafe.Application.Interfaces;
 using Cafe.Domain.Entities;
 using MongoDB.Driver;
 using MongoDB.Bson;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cafe.Infrastructure.Data.Repositories;

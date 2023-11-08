@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cafe.Infrastructure", "Cafe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cafe.Web", "Cafe.Web\Cafe.Web.csproj", "{813B6326-2431-405B-98BD-4726E913BC30}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cafe.xTests", "Cafe.xTests\Cafe.xTests.csproj", "{54E1936A-9993-4A65-BD35-2A13730F9AE1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{813B6326-2431-405B-98BD-4726E913BC30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{813B6326-2431-405B-98BD-4726E913BC30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{813B6326-2431-405B-98BD-4726E913BC30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54E1936A-9993-4A65-BD35-2A13730F9AE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54E1936A-9993-4A65-BD35-2A13730F9AE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54E1936A-9993-4A65-BD35-2A13730F9AE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54E1936A-9993-4A65-BD35-2A13730F9AE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

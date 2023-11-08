@@ -1,4 +1,3 @@
-using Stock.Domain.Entities;
 using Stock.Application.DTO;
 using Stock.Application.OperationResult;
 
