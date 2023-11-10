@@ -4,6 +4,7 @@ using Stock.Application.DTO;
 using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Stock.Web.Controllers;
 

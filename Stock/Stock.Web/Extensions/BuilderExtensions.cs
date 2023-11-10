@@ -16,6 +16,14 @@ namespace Stock.Web.Extensions;
 
 public static class BuilderExtensions
 {
+    public static void RedisRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddStackExchangeRedisCache(options => {
+            options.Configuration = builder.Configuration.GetSection("Redis")["Configuration"];
+            options.InstanceName = builder.Configuration.GetSection("Redis")["InstanceName"];
+        });
+    }
+    
     public static void DatabaseRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.Configure<StockDatabaseSettings>(

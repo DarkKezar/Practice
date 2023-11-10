@@ -22,14 +22,21 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Cafe.Application.Services;
 using Cafe.Application.Proto;
-using Cafe.Application.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using MassTransit;
 
 namespace Cafe.Web.Extenssions;
 
-public static class BuilderExtension
+public static class BuilderExtensions
 {
+    public static void RedisRegistration(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddStackExchangeRedisCache(options => {
+            options.Configuration = builder.Configuration.GetSection("Redis")["Configuration"];
+            options.InstanceName = builder.Configuration.GetSection("Redis")["InstanceName"];
+        });
+    }
+
     public static void HangfireRegistration(this WebApplicationBuilder builder)
     {
         builder.Services.AddHangfire(config => {

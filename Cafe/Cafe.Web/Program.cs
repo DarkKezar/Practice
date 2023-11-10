@@ -13,11 +13,11 @@ builder.AutomappersRegistration();
 builder.ValidatorsRegistration();
 builder.CommandAndQueryRegistration();
 builder.HangfireRegistration();
-
-builder.Services.AddControllers();
+builder.RedisRegistration();
 builder.SignalRRegistration();
 builder.ConfigureKestrel();
 
+builder.Services.AddControllers();
 builder.Services.AddControllers();
 builder.Services.AddGrpc();
 builder.Services.AddEndpointsApiExplorer();
