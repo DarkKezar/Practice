@@ -3,6 +3,7 @@ using Cafe.Web.Extenssions;
 using Hangfire;
 using Cafe.Web.Hubs;
 using Cafe.Application.Services;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +14,6 @@ builder.AutomappersRegistration();
 builder.ValidatorsRegistration();
 builder.CommandAndQueryRegistration();
 builder.HangfireRegistration();
-
-builder.Services.AddControllers();
 builder.SignalRRegistration();
 builder.ConfigureKestrel();
 

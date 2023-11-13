@@ -14,7 +14,7 @@ public abstract class BaseRepository<T> : IRepository<T> where T : BaseEntity
 
     public async Task<IList<T>> GetAllAsync(int page, int count, CancellationToken cancellationToken = default)
     {
-        return await _collection.AsQueryable().Skip(page * count).Take(count).ToListAsync();
+        return _collection.AsQueryable().Skip(page * count).Take(count).ToList();
     }
 
     public IQueryable<T> GetIQueryable(CancellationToken cancellationToken = default)
