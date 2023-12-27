@@ -1,0 +1,40 @@
+{
+    "ReRoutes": [
+        {
+            "UpstreamPathTemplate": "/cafe/api/{url}",
+            "DownstreamPathTemplate": "/api/{url}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+              {
+                "Host": "localhost",
+                "Port": 5052
+              }
+            ]
+        },
+        {
+            "UpstreamPathTemplate": "/identity/api/{url}",
+            "DownstreamPathTemplate": "/api/{url}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+              {
+                "Host": "localhost",
+                "Port": 5050
+              }
+            ]
+        },
+        {
+            "UpstreamPathTemplate": "/stock/api/{url}",
+            "DownstreamPathTemplate": "/api/{url}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+              {
+                "Host": "localhost",
+                "Port": 5157
+              }
+            ]
+        }
+    ],
+    "GlobalConfiguration": {
+        "BaseUrl": "https://localhost:7236"
+    }
+}
